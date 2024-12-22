@@ -5,7 +5,7 @@ userData.setup()
 
 const listUser = (query) => {
     return service({
-        url: '/system/user/list',
+        url: '/user/list',
         method: 'get',
         params: query
     })
@@ -13,21 +13,21 @@ const listUser = (query) => {
 
 const getUser = (userId) => {
     return service({
-        url: '/system/user/' + parseStrEmpty(userId),
+        url: '/user/' + parseStrEmpty(userId),
         method: 'get'
     })
 }
 
 const delUser = (userId) => {
     return service({
-        url: '/system/user/' + userId,
+        url: '/user/' + userId,
         method: 'delete'
     })
 }
 
 const addUser = (data) => {
     return service({
-        url: '/system/user',
+        url: '/user',
         method: 'post',
         data: data
     })
@@ -35,7 +35,7 @@ const addUser = (data) => {
 
 const updateUser = (data) => {
     return service({
-        url: '/system/user',
+        url: '/user',
         method: 'put',
         data: data
     })
@@ -47,7 +47,7 @@ const changeUserStatus = (userId, status) => {
         status
     }
     return service({
-        url: '/system/user/changeStatus',
+        url: '/user/changeStatus',
         method: 'put',
         data: data
     })
