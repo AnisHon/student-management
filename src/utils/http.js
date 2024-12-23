@@ -16,7 +16,6 @@ const errorCode = {
     'default': '系统未知错误，请反馈给管理员'
 };
 
-let downloadLoadingInstance;
 // 是否显示重新登录
 export let isRelogin = { show: false };
 
@@ -24,8 +23,8 @@ axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 // 创建axios实例
 const service = axios.create({
     // axios中请求配置有baseURL选项，表示请求URL公共部分
-    // baseURL: "/api",
-    baseURL:"http://192.168.20.191:8080",
+    baseURL: "/api",
+    // baseURL:"http://192.168.20.191:8080",
     // 超时
     timeout: 10000
 })

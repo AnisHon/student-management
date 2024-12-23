@@ -14,10 +14,14 @@ export default defineConfig({
     },
     extensions: ['.js', '.vue', '.json']
   },
-  // proxy: {
-  //   '/api': {
-  //     target: 'http://192.168.20.191:8080',changeOrigin: true,
-  //     rewrite: (path) => path.replace(/^\/api/, '')
-  //   }
-  // }
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://192.168.20.191:8080',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    }
+
+  }
 })
