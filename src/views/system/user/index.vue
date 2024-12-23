@@ -144,8 +144,8 @@
 
 
     <!-- 添加或修改用户配置对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
-      <el-form ref="form" :model="form" label-width="80px">
+    <el-dialog :title="title" v-model="open" width="600px" append-to-body>
+      <el-form  label-width="80px">
         <el-row>
           <el-col :span="12">
             <el-form-item label="用户昵称" prop="nickName">
@@ -178,18 +178,6 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">
-            <el-form-item label="用户性别">
-              <el-select v-model="form.sex" placeholder="请选择性别">
-                <el-option
-                    v-for="dict in dict.type.sys_user_sex"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
           <el-col :span="12">
             <el-form-item label="状态">
               <el-radio-group v-model="form.status">
@@ -229,6 +217,7 @@ import Pagination from "@/components/Pagination/index.vue";
 import {addUser, changeUserStatus, getUser, listUser, updateUser} from "@/api/user/index.js";
 import {resetForm} from "@/utils/form.js";
 import RightToolbar from "@/components/RightToolbar/index.vue";
+import _ from "lodash"
 
 const loading =  ref(true);
 // 选中数组
@@ -253,7 +242,20 @@ const open = ref(false);
 const initPassword = ref("");
 
 // 表单参数
-const form = ref({});
+const form = reactive({
+  userId: undefined,
+  deptId: undefined,
+  userName: undefined,
+  nickName: undefined,
+  password: undefined,
+  phonenumber: undefined,
+  email: undefined,
+  sex: undefined,
+  status: "0",
+  remark: undefined,
+  postIds: [],
+  roleIds: []
+});
 
 const queryParams = reactive( {
   pageNum: 1,
@@ -277,6 +279,7 @@ const columns = reactive([
 
 const getList = () => {
   loading.value = true;
+  reset()
   listUser(queryParams).then(response => {
         userList.value = response.rows;
         total.value = response.total;
@@ -306,7 +309,7 @@ const cancel = () => {
 
 // 表单重置
 const reset = () => {
-  form.value = {
+  const f = {
     userId: undefined,
     deptId: undefined,
     userName: undefined,
@@ -320,7 +323,8 @@ const reset = () => {
     postIds: [],
     roleIds: []
   };
-  resetForm("form");
+  _.assign(form, f)
+
 };
 
 /** 搜索按钮操作 */
@@ -330,7 +334,6 @@ const handleQuery = () => {
 };
 /** 重置按钮操作 */
 const resetQuery = () => {
-  resetForm("queryForm");
   queryParams.deptId = undefined;
   handleQuery();
 };
@@ -356,18 +359,16 @@ const handleCommand = (command, row) => {
 /** 新增按钮操作 */
 const handleAdd = () => {
   reset();
-  getUser().then(response => {
-    open.value = true;
-    title.value = "添加用户";
-    form.password = initPassword;
-  });
+  open.value = true;
+  title.value = "添加用户";
+  form.password = initPassword;
 };
 /** 修改按钮操作 */
 const handleUpdate = (row) => {
   reset();
   const userId = row.userId || ids;
   getUser(userId).then(response => {
-    form.value = response.data;
+    __.assign(form, response);
     open.value = true;
     title.value = "修改用户";
     form.password = "";

@@ -1,5 +1,7 @@
+import {ref} from "vue";
+
 export function resetForm(refName) {
-    if (this.$refs[refName]) {
-        this.$refs[refName].resetFields();
+    for (const item in refName) {
+        refName[item] = ref(refName[item]);
     }
 }
