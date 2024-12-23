@@ -1,36 +1,18 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="学生姓名" prop="userName">
-        <el-input
-            v-model="queryParams.userName"
-            placeholder="请输入学生姓名"
-            clearable
-            style="width: 240px"
-            @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="学号" prop="phonenumber">
-        <el-input
-            v-model="queryParams.phonenumber"
-            placeholder="请输入学号"
-            clearable
-            style="width: 240px"
-            @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="" prop="status">
+      <el-form-item label="专业" prop="majorId">
         <el-select
-            v-model="queryParams.status"
-            placeholder="用户状态"
+            v-model="queryParams.majorId"
+            placeholder="选择专业"
             clearable
             style="width: 240px"
         >
           <el-option
-              v-for="dict in [{value: 1, label:1}]"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
+              v-for="dict of classList"
+              :key="dict.majorId"
+              :label="dict.major.majorName"
+              :value="dict.majorId"
           />
         </el-select>
       </el-form-item>
@@ -72,7 +54,7 @@
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" :columns="columns" style="margin-left: auto"></right-toolbar>
     </el-row>
-    <el-table v-loading="loading" :data="majorList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="50" align="center" />
       <el-table-column label="专业ID" align="center" key="workNumber" prop="majorId" v-if="columns[0].visible" />
       <el-table-column label="专业名称" align="center" key="userName" prop="majorName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
@@ -197,7 +179,16 @@
 import {reactive, ref} from "vue";
 import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
 import Pagination from "@/components/Pagination/index.vue";
-import {addMajor, changeUserStatus, getUser, listUser, updateMajor, listStudent, listMajor} from "@/api/user/index.js";
+import {
+  addMajor,
+  changeUserStatus,
+  getUser,
+  listUser,
+  updateMajor,
+  listStudent,
+  listMajor,
+  listClass
+} from "@/api/user/index.js";
 // import {resetForm} from "@/utils/form.js";
 import RightToolbar from "@/components/RightToolbar/index.vue";
 import _ from "lodash"
@@ -215,10 +206,8 @@ const showSearch = ref(true);
 const total = ref(0);
 // 用户表格数据
 const userList = ref([]);
-// 学生表格数据
-const studentList = ref([]);
-// 专业表格数据
-const majorList = ref([])
+// 班级数据
+const classList = ref([]);
 // 弹出层标题
 const title =  ref("");
 
@@ -249,25 +238,25 @@ const columns = reactive([
 ])
 
 
-// const getList = () => {
-  // loading.value = true;
-  // listUser(queryParams).then(response => {
-  //       userList.value = response.rows;
-  //       total.value = response.total;
-  //       loading.value = false;
-  //     }
-  // );
-// };
-
-const getMajor = () => {
+const getList = () => {
   loading.value = true;
-  listMajor(queryParams).then(resepose =>{
-    console.log("专业");
-    console.log(resepose);
-    majorList.value = resepose.rows;
-    total.value = resepose.total;
+  listMajor(queryParams).then(response => {
+        userList.value = response.rows;
+        total.value = response.total;
+        loading.value = false;
+      }
+  );
+};
+
+const getClass = () => {
+  loading.value = true;
+  // reset();
+  listClass().then(response => {
+    console.log("班级信息")
+    console.log(response)
+    classList.value = response;
     loading.value = false;
-  });
+  })
 }
 
 
@@ -382,7 +371,6 @@ const handleDelete = (row) => {
 
 
 // created
-// getList();
-// getStudent();
-getMajor();
+getList();
+getClass();
 </script>

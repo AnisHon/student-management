@@ -338,7 +338,7 @@ const getList = () => {
 
 const getClass = () => {
   loading.value = true;
-  reset();
+  // reset();
   listClass().then(response => {
     console.log("班级信息")
     console.log(response)
