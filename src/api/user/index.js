@@ -1,7 +1,7 @@
 import service from "@/utils/http.js";
-import {userData} from "@/mookjs/test.js";
+// import {userData} from "@/mookjs/test.js";
 
-userData.setup()
+// userData.setup()
 
 const listUser = (query) => {
     return service({

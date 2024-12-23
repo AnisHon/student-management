@@ -3,7 +3,6 @@ import {useToken} from "@/stores/token.js";
 import {Message} from "@element-plus/icons-vue";
 import {useRouter} from "vue-router";
 import {ElMessage, ElNotification} from "element-plus";
-import {userData} from "@/mookjs/test.js";
 import {title} from "mockjs/src/mock/random/text.js";
 
 
