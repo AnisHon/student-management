@@ -14,10 +14,26 @@ const listUser = (query) => {
     })
 }
 
-const classUser = (classList) =>{
+const listClass = (classList) =>{
     return service({
         url:'/system/class/all',
         method:'get'
+    })
+}
+
+const listStudent = (query) => {
+    return service({
+        url: '/system/student/list',
+        method: 'get',
+        params: query
+    })
+}
+
+const listMajor = (query) => {
+    return service({
+        url: '/system/major/list',
+        method: 'get',
+        params: query
     })
 }
 
@@ -35,6 +51,13 @@ const delUser = (userId) => {
     })
 }
 
+const delStudent = (userId) => {
+    return service({
+        url: '/system/student/' + userId,
+        method: 'delete'
+    })
+}
+
 const addUser = (data) => {
     return service({
         url: '/system/user',
@@ -43,9 +66,42 @@ const addUser = (data) => {
     })
 }
 
+const addMajor = (data) => {
+    console.log(data);
+    return service({
+        url: '/system/major',
+        method: 'post',
+        data: data
+    })
+}
+
+const addStudent = (data) => {
+    return service({
+        url: '/system/student',
+        method: 'post',
+        data: data
+    })
+}
+
 const updateUser = (data) => {
     return service({
         url: '/system/user',
+        method: 'put',
+        data: data
+    })
+}
+
+const updateStudent = (data) => {
+    return service({
+        url: '/system/student',
+        method: 'put',
+        data: data
+    })
+}
+
+const updateMajor = (data) => {
+    return service({
+        url: 'system/major',
         method: 'put',
         data: data
     })
@@ -72,5 +128,12 @@ export {
     addUser,
     updateUser,
     changeUserStatus,
-    classUser,
+    listClass,
+    listStudent,
+    listMajor,
+    addMajor,
+    updateMajor,
+    addStudent,
+    updateStudent,
+    delStudent,
 }

@@ -62,7 +62,7 @@ export const constRouters = [
             },
             {
               path: "student",
-              component:() => import('@/views/system/student'),
+              component:() => import('@/views/system/student/index.vue'),
               meta:{
                 title: "学生管理"
               }
@@ -72,6 +72,13 @@ export const constRouters = [
               component:() => import('@/views/system/class'),
               meta:{
                 title: "班级管理"
+              }
+            },
+            {
+              path:"major",
+              component:() => import('@/views/system/major'),
+              meta:{
+                title: "专业管理"
               }
             }
           ]

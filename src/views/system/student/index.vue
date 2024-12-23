@@ -10,30 +10,40 @@
             @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="学号" prop="phonenumber">
+      <el-form-item label="学号" prop="userId">
         <el-input
-            v-model="queryParams.phonenumber"
+            v-model="queryParams.userId"
             placeholder="请输入学号"
             clearable
             style="width: 240px"
             @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="" prop="status">
+      <el-form-item label="专业" prop="majorId">
         <el-select
-            v-model="queryParams.status"
-            placeholder="用户状态"
+            v-model="queryParams.majorId"
+            placeholder="选择专业"
             clearable
             style="width: 240px"
         >
           <el-option
-              v-for="dict in [{value: 1, label:1}]"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
+              v-for="dict of classList"
+              :key="dict.classId"
+              :label="dict.major.majorName + dict.className"
+              :value="dict.classId"
           />
         </el-select>
       </el-form-item>
+<!--      <el-form-item label="班级" prop="phonenumber">-->
+<!--        <el-input-->
+<!--            v-model="queryParams.phonenumber"-->
+<!--            placeholder="请输入班级"-->
+<!--            clearable-->
+<!--            style="width: 240px"-->
+<!--            @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+
       <el-form-item>
         <el-button type="primary" icon="search" @click="handleQuery">搜索</el-button>
         <el-button icon="refresh"  @click="resetQuery">重置</el-button>
@@ -72,29 +82,21 @@
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" :columns="columns" style="margin-left: auto"></right-toolbar>
     </el-row>
-
-    <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="studentList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="50" align="center" />
-      <el-table-column label="学号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
-      <el-table-column label="姓名" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
-      <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-      <el-table-column label="班级" align="center" key="deptName" prop="dept.deptName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
-<!--      <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />-->
-      <el-table-column label="状态" align="center" key="status" v-if="columns[5].visible">
-        <template v-slot="scope">
-          <el-switch
-              v-model="scope.row.status"
-              active-value="0"
-              inactive-value="1"
-              @change="handleStatusChange(scope.row)"
-          ></el-switch>
-        </template>
-      </el-table-column>
-      <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">
-        <template v-slot="scope">
-          <span>{{ scope.row.createTime }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column label="学号" align="center" key="workNumber" prop="workNumber" v-if="columns[0].visible" />
+      <el-table-column label="学生姓名" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
+      <el-table-column label="性别" align="center" key="gender" prop="gender" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+      <el-table-column label="生日" align="center" key="birthday" prop="birthday" v-if="columns[3].visible" :show-overflow-tooltip="true" />
+      <el-table-column label="学院" align="center" key="institution" prop="institution" v-if="columns[4].visible" :show-overflow-tooltip="true" />
+      <el-table-column label="专业" align="center" key="majorName" prop="majorName" v-if="columns[5].visible" :show-overflow-tooltip="true" />
+      <el-table-column label="班级" align="center" key="className" prop="className" v-if="columns[6].visible" :show-overflow-tooltip="true" />
+
+<!--      <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">-->
+<!--        <template v-slot="scope">-->
+<!--          <span>{{ scope.row.createTime }}</span>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <el-table-column
           label="操作"
           align="center"
@@ -144,52 +146,75 @@
 
 
     <!-- 添加或修改用户配置对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
-      <el-form ref="form" :model="form" label-width="80px">
+    <el-dialog :title="title" v-model="open" width="600px" append-to-body>
+      <el-form  label-width="80px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="用户昵称" prop="nickName">
-              <el-input v-model="form.nickName" placeholder="请输入用户昵称" maxlength="30" />
+            <el-form-item label="学号" prop="userId">
+              <el-input v-model="form.userId" placeholder="请输入学号" maxlength="30" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="学生姓名" prop="userName">
+              <el-input v-model="form.userName" placeholder="请输入学生姓名" maxlength="11" />
             </el-form-item>
           </el-col>
         </el-row>
+
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="性别" >
+                <el-select
+                    v-model="queryParams.gender"
+                    placeholder="选择性别"
+                    clearable
+                    style="width: 240px"
+                >
+                  <el-option
+                      v-for="dict in [{lable: '男', value: 1},
+                    {lable: '女', value: 0}]"
+                      :key="dict.value"
+                      :label="dict.lable"
+                      :value="dict.value"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="生日" prop="birthday">
+                <el-input v-model="form.birthday" placeholder="请输入生日" maxlength="11" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+
         <el-row>
           <el-col :span="12">
-            <el-form-item label="手机号码" prop="phonenumber">
-              <el-input v-model="form.phonenumber" placeholder="请输入手机号码" maxlength="11" />
+            <el-form-item label="学院" prop="institution">
+              <el-input v-model="form.institution" placeholder="学院" maxlength="11" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="邮箱" prop="email">
-              <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="50" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item v-if="form.userId === undefined" label="用户名称" prop="userName">
-              <el-input v-model="form.userName" placeholder="请输入用户名称" maxlength="30" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item v-if="form.userId === undefined" label="用户密码" prop="password">
-              <el-input v-model="form.password" placeholder="请输入用户密码" type="password" maxlength="20" show-password/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="用户性别">
-              <el-select v-model="form.sex" placeholder="请选择性别">
+            <el-form-item label="专业" prop="majorId">
+              <el-select
+                  v-model="queryParams.majorId"
+                  placeholder="选择专业"
+                  clearable
+                  style="width: 240px"
+              >
                 <el-option
-                    v-for="dict in dict.type.sys_user_sex"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
-                ></el-option>
+                    v-for="dict of classList"
+                    :key="dict.classId"
+                    :label="dict.major.majorName + dict.className"
+                    :value="dict.classId"
+                />
               </el-select>
             </el-form-item>
           </el-col>
+        </el-row>
+
+
+        <el-row>
           <el-col :span="12">
             <el-form-item label="状态">
               <el-radio-group v-model="form.status">
@@ -226,8 +251,17 @@
 import {reactive, ref} from "vue";
 import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
 import Pagination from "@/components/Pagination/index.vue";
-import {addUser, changeUserStatus, getUser, listUser, updateUser} from "@/api/user/index.js";
-import {resetForm} from "@/utils/form.js";
+import {
+  addUser,
+  changeUserStatus,
+  getUser,
+  listUser,
+  updateUser,
+  listStudent,
+  listClass,
+  updateStudent, addStudent, delStudent
+} from "@/api/user/index.js";
+// import {resetForm} from "@/utils/form.js";
 import RightToolbar from "@/components/RightToolbar/index.vue";
 
 const loading =  ref(true);
@@ -243,6 +277,8 @@ const showSearch = ref(true);
 const total = ref(0);
 // 用户表格数据
 const userList = ref([]);
+// 学生表格数据
+const studentList = ref([]);
 // 弹出层标题
 const title =  ref("");
 
@@ -258,17 +294,17 @@ const form = ref({});
 const queryParams = reactive( {
   pageNum: 1,
   pageSize: 10,
-  userName: undefined,
-  phonenumber: undefined,
-  status: undefined,
-  deptId: undefined
+  // userName: undefined,
+  // phonenumber: undefined,
+  // status: undefined,
+  // deptId: undefined
 });
 // 列信息
 const columns = reactive([
-  { key: 0, label: `用户编号`, visible: true },
-  { key: 1, label: `用户名称`, visible: true },
-  { key: 2, label: `用户昵称`, visible: true },
-  { key: 3, label: `部门`, visible: true },
+  { key: 0, label: `学号`, visible: true },
+  { key: 1, label: `学生姓名`, visible: true },
+  { key: 2, label: `专业`, visible: true },
+  { key: 3, label: `班级`, visible: true },
   { key: 4, label: `手机号码`, visible: true },
   { key: 5, label: `状态`, visible: true },
   { key: 6, label: `创建时间`, visible: true }
@@ -277,7 +313,7 @@ const columns = reactive([
 
 const getList = () => {
   loading.value = true;
-  listUser(queryParams).then(response => {
+  listStudent(queryParams).then(response => {
         userList.value = response.rows;
         total.value = response.total;
         loading.value = false;
@@ -285,6 +321,27 @@ const getList = () => {
   );
 };
 
+// const getStudent = () => {
+//   // loading.value = ture;
+//   listStudent(queryParams).then(response => {
+//     console.log("x学生信息")
+//     console.log(response)
+//     studentList.value = response.rows;
+//     total.value = response.total;
+//     loading.value = false;
+//   })
+// }
+
+const getClass = () => {
+  loading.value = true;
+  reset();
+  listClass().then(response => {
+    console.log("班级信息")
+    console.log(response)
+    classList.value = response
+    loading.value = false;
+  })
+}
 
 
 // 用户状态修改
@@ -320,7 +377,7 @@ const reset = () => {
     postIds: [],
     roleIds: []
   };
-  resetForm("form");
+  // resetForm("form");
 };
 
 /** 搜索按钮操作 */
@@ -330,7 +387,7 @@ const handleQuery = () => {
 };
 /** 重置按钮操作 */
 const resetQuery = () => {
-  resetForm("queryForm");
+  // resetForm("queryForm");
   queryParams.deptId = undefined;
   handleQuery();
 };
@@ -356,11 +413,8 @@ const handleCommand = (command, row) => {
 /** 新增按钮操作 */
 const handleAdd = () => {
   reset();
-  getUser().then(response => {
-    open.value = true;
-    title.value = "添加用户";
-    form.password = initPassword;
-  });
+  open.value = true;
+  title.value = "添加学生信息";
 };
 /** 修改按钮操作 */
 const handleUpdate = (row) => {
@@ -369,7 +423,7 @@ const handleUpdate = (row) => {
   getUser(userId).then(response => {
     form.value = response.data;
     open.value = true;
-    title.value = "修改用户";
+    title.value = "修改学生信息";
     form.password = "";
   });
 };
@@ -380,14 +434,14 @@ const handleResetPwd = (row) => {
 
 /** 提交按钮 */
 const submitForm = () => {
-  if (form.userId !== undefined) {
-    updateUser(form).then(response => {
+  if (form.value.userId !== undefined) {
+    updateStudent(form.value).then(response => {
       ElMessage.success("修改成功");
       open.value = false;
       getList();
     });
   } else {
-    addUser(form).then(response => {
+    addStudent(form.value).then(response => {
       ElMessage.success("新增成功")
       open.value = false;
       getList();
@@ -399,7 +453,7 @@ const submitForm = () => {
 const handleDelete = (row) => {
   const userIds = row.userId || ids.value;
   ElMessageBox.confirm('是否确认删除用户编号为"' + userIds + '"的数据项？').then(function() {
-    return delUser(userIds);
+    return delStudent(userIds);
   }).then(() => {
     getList();
     ElMessage.success("删除成功");
@@ -412,5 +466,7 @@ const handleDelete = (row) => {
 
 
 // created
+// getStudent();
 getList();
+getClass();
 </script>
