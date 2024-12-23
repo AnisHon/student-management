@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="专业" prop="status">
+      <el-form-item label="专业" prop="majorId">
         <el-select
             v-model="queryParams.status"
             placeholder="选择专业"
@@ -16,30 +16,30 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="学号" prop="phonenumber">
-        <el-input
-            v-model="queryParams.phonenumber"
-            placeholder="请输入学号"
-            clearable
-            style="width: 240px"
-            @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="999" prop="status">
-        <el-select
-            v-model="queryParams.status"
-            placeholder="用户状态"
-            clearable
-            style="width: 240px"
-        >
-          <el-option
-              v-for="dict in [{value: 1, label:1}]"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
+<!--      <el-form-item label="学号" prop="phonenumber">-->
+<!--        <el-input-->
+<!--            v-model="queryParams.phonenumber"-->
+<!--            placeholder="请输入学号"-->
+<!--            clearable-->
+<!--            style="width: 240px"-->
+<!--            @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="999" prop="status">-->
+<!--        <el-select-->
+<!--            v-model="queryParams.status"-->
+<!--            placeholder="用户状态"-->
+<!--            clearable-->
+<!--            style="width: 240px"-->
+<!--        >-->
+<!--          <el-option-->
+<!--              v-for="dict in [{value: 1, label:1}]"-->
+<!--              :key="dict.value"-->
+<!--              :label="dict.label"-->
+<!--              :value="dict.value"-->
+<!--          />-->
+<!--        </el-select>-->
+<!--      </el-form-item>-->
       <el-form-item>
         <el-button type="primary" icon="search" @click="handleQuery">搜索</el-button>
         <el-button icon="refresh"  @click="resetQuery">重置</el-button>
@@ -81,26 +81,26 @@
 
     <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="50" align="center" />
-      <el-table-column label="学号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
-      <el-table-column label="姓名" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
-      <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-      <el-table-column label="班级" align="center" key="deptName" prop="dept.deptName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
+      <el-table-column label="专业名称" align="center" key="majorName" prop="majorName" v-if="columns[0].visible" />
+      <el-table-column label="班级" align="center" key="className" prop="className" v-if="columns[1].visible" :show-overflow-tooltip="true" />
+      <el-table-column label="学院名称" align="center" key="institution" prop="institution" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+<!--      <el-table-column label="班级" align="center" key="deptName" prop="dept.deptName" v-if="columns[3].visible" :show-overflow-tooltip="true" />-->
       <!--      <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />-->
-      <el-table-column label="状态" align="center" key="status" v-if="columns[5].visible">
-        <template v-slot="scope">
-          <el-switch
-              v-model="scope.row.status"
-              active-value="0"
-              inactive-value="1"
-              @change="handleStatusChange(scope.row)"
-          ></el-switch>
-        </template>
-      </el-table-column>
-      <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">
-        <template v-slot="scope">
-          <span>{{ scope.row.createTime }}</span>
-        </template>
-      </el-table-column>
+<!--      <el-table-column label="状态" align="center" key="status" v-if="columns[5].visible">-->
+<!--        <template v-slot="scope">-->
+<!--          <el-switch-->
+<!--              v-model="scope.row.status"-->
+<!--              active-value="0"-->
+<!--              inactive-value="1"-->
+<!--              @change="handleStatusChange(scope.row)"-->
+<!--          ></el-switch>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
+<!--      <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">-->
+<!--        <template v-slot="scope">-->
+<!--          <span>{{ scope.row.createTime }}</span>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <el-table-column
           label="操作"
           align="center"
@@ -299,7 +299,7 @@ const getClass = () => {
   listClass().then(response => {
     console.log("班级信息")
     console.log(response)
-    classList.value = response
+    classList.value = response;
     loading.value = false;
   })
 }

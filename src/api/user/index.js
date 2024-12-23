@@ -14,7 +14,7 @@ const listUser = (query) => {
     })
 }
 
-const listClass = (classList) =>{
+const listClass = () =>{
     return service({
         url:'/system/class/all',
         method:'get'

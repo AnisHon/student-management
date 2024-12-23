@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="学生姓名" prop="userName">
+      <el-form-item label="学生姓名" prop="username">
         <el-input
-            v-model="queryParams.userName"
+            v-model="queryParams.username"
             placeholder="请输入学生姓名"
             clearable
             style="width: 240px"
@@ -28,8 +28,23 @@
         >
           <el-option
               v-for="dict of classList"
+              :key="dict.majorId"
+              :label="dict.major.majorName"
+              :value="dict.majorId"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="班级" prop="classId">
+        <el-select
+            v-model="queryParams.classId"
+            placeholder="选择班级"
+            clearable
+            style="width: 240px"
+        >
+          <el-option
+              v-for="dict of classList"
               :key="dict.classId"
-              :label="dict.major.majorName + dict.className"
+              :label="dict.className"
               :value="dict.classId"
           />
         </el-select>
@@ -82,10 +97,10 @@
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" :columns="columns" style="margin-left: auto"></right-toolbar>
     </el-row>
-    <el-table v-loading="loading" :data="studentList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="50" align="center" />
       <el-table-column label="学号" align="center" key="workNumber" prop="workNumber" v-if="columns[0].visible" />
-      <el-table-column label="学生姓名" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
+      <el-table-column label="学生姓名" align="center" key="username" prop="username" v-if="columns[1].visible" :show-overflow-tooltip="true" />
       <el-table-column label="性别" align="center" key="gender" prop="gender" v-if="columns[2].visible" :show-overflow-tooltip="true" />
       <el-table-column label="生日" align="center" key="birthday" prop="birthday" v-if="columns[3].visible" :show-overflow-tooltip="true" />
       <el-table-column label="学院" align="center" key="institution" prop="institution" v-if="columns[4].visible" :show-overflow-tooltip="true" />
@@ -155,8 +170,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="学生姓名" prop="userName">
-              <el-input v-model="form.userName" placeholder="请输入学生姓名" maxlength="11" />
+            <el-form-item label="学生姓名" prop="username">
+              <el-input v-model="form.username" placeholder="请输入学生姓名" maxlength="11" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -171,10 +186,10 @@
                     style="width: 240px"
                 >
                   <el-option
-                      v-for="dict in [{lable: '男', value: 1},
-                    {lable: '女', value: 0}]"
+                      v-for="dict in [{label: '男', value: 1},
+                    {label: '女', value: 0}]"
                       :key="dict.value"
-                      :label="dict.lable"
+                      :label="dict.label"
                       :value="dict.value"
                   />
                 </el-select>
@@ -277,8 +292,8 @@ const showSearch = ref(true);
 const total = ref(0);
 // 用户表格数据
 const userList = ref([]);
-// 学生表格数据
-const studentList = ref([]);
+// 班级数据
+const classList = ref([]);
 // 弹出层标题
 const title =  ref("");
 
@@ -294,20 +309,20 @@ const form = ref({});
 const queryParams = reactive( {
   pageNum: 1,
   pageSize: 10,
-  // userName: undefined,
-  // phonenumber: undefined,
-  // status: undefined,
-  // deptId: undefined
+  username: undefined,
+  phonenumber: undefined,
+  status: undefined,
+  deptId: undefined
 });
 // 列信息
 const columns = reactive([
   { key: 0, label: `学号`, visible: true },
   { key: 1, label: `学生姓名`, visible: true },
-  { key: 2, label: `专业`, visible: true },
-  { key: 3, label: `班级`, visible: true },
-  { key: 4, label: `手机号码`, visible: true },
-  { key: 5, label: `状态`, visible: true },
-  { key: 6, label: `创建时间`, visible: true }
+  { key: 2, label: `性别`, visible: true },
+  { key: 3, label: `生日`, visible: true },
+  { key: 4, label: `学院`, visible: true },
+  { key: 5, label: `专业`, visible: true },
+  { key: 6, label: `班级`, visible: true }
 ])
 
 
@@ -321,24 +336,13 @@ const getList = () => {
   );
 };
 
-// const getStudent = () => {
-//   // loading.value = ture;
-//   listStudent(queryParams).then(response => {
-//     console.log("x学生信息")
-//     console.log(response)
-//     studentList.value = response.rows;
-//     total.value = response.total;
-//     loading.value = false;
-//   })
-// }
-
 const getClass = () => {
   loading.value = true;
   reset();
   listClass().then(response => {
     console.log("班级信息")
     console.log(response)
-    classList.value = response
+    classList.value = response;
     loading.value = false;
   })
 }
@@ -347,7 +351,7 @@ const getClass = () => {
 // 用户状态修改
 const handleStatusChange = (row) => {
   let text = row.status === "0" ? "启用" : "停用";
-  ElMessageBox.confirm('确认要"' + text + '""' + row.userName + '"用户吗？').then(function() {
+  ElMessageBox.confirm('确认要"' + text + '""' + row.username + '"用户吗？').then(function() {
     return changeUserStatus(row.userId, row.status);
   }).then(() => {
     ElMessage.success(text + "成功");
@@ -366,7 +370,7 @@ const reset = () => {
   form.value = {
     userId: undefined,
     deptId: undefined,
-    userName: undefined,
+    username: undefined,
     nickName: undefined,
     password: undefined,
     phonenumber: undefined,
