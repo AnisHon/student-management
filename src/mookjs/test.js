@@ -30,3 +30,51 @@
 //     code: 200,
 //     message: 'ok',
 // });
+
+import Mock from 'mockjs'
+Mock.setup({
+    timeout:'500-1000',
+});
+
+// 模拟用户列表的接口
+Mock.mock(/\/user\/list/, 'get', (options) => {
+    console.log('Mock intercepted:', options);  // 打印请求参数
+
+    // 获取查询参数
+    const { pageNum, pageSize } = options.url
+        .split('?')[1]
+        .split('&')
+        .reduce((params, param) => {
+            const [key, value] = param.split('=');
+            params[key] = decodeURIComponent(value);
+            return params;
+        }, {});
+
+    // 随机生成数据
+    const total = 100; // 假设有 100 条数据
+    const data_ = [];
+    for (let i = 0; i < pageSize; i++) {
+        data_.push(Mock.mock({
+            userId: '@increment',  // 自动递增的用户ID
+            userName: '@word(5, 10)',  // 随机生成 5 到 10 个字符的用户名
+            nickName: '@cname',  // 随机生成中文名字
+            phonenumber: /^1[3-9]\d{9}$/,  // 随机生成手机号
+            email: '@email',  // 随机生成邮箱
+            status: '0',  // 随机选择状态 0 或 1
+            createTime: '@datetime("yyyy-MM-dd HH:mm:ss")',  // 随机生成时间
+        }));
+    }
+
+    console.log('Mock response:', { rows: data_, total });  // 打印模拟数据
+
+    return {
+        message: " ",
+        code: 200,
+        data: {
+            rows: data_,
+            total,
+        }
+    };
+});
+
+export {Mock};

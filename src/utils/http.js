@@ -24,7 +24,8 @@ axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 // 创建axios实例
 const service = axios.create({
     // axios中请求配置有baseURL选项，表示请求URL公共部分
-    baseURL: "/api",
+    // baseURL: "/api",
+    baseURL:"http://192.168.20.191:8080",
     // 超时
     timeout: 10000
 })
@@ -71,6 +72,8 @@ service.interceptors.response.use(res => {
             Notification.error({ title: msg })
             return Promise.reject('error')
         } else {
+            console.log(res)
+            console.log(res.data)
             return res.data.data
         }
     },

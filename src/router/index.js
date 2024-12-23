@@ -59,6 +59,20 @@ export const constRouters = [
               meta: {
                 title: "用户管理"
               }
+            },
+            {
+              path: "student",
+              component:() => import('@/views/system/student'),
+              meta:{
+                title: "学生管理"
+              }
+            },
+            {
+              path:'class',
+              component:() => import('@/views/system/class'),
+              meta:{
+                title: "班级管理"
+              }
             }
           ]
         },

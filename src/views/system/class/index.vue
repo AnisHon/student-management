@@ -1,25 +1,32 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="用户名称" prop="userName">
-        <el-input
-            v-model="queryParams.userName"
-            placeholder="请输入用户名称"
+      <el-form-item label="专业" prop="status">
+        <el-select
+            v-model="queryParams.status"
+            placeholder="选择专业"
             clearable
             style="width: 240px"
-            @keyup.enter.native="handleQuery"
-        />
+        >
+          <el-option
+              v-for="dict in [
+              {label: classList.major, value: classList.classID}]"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
-      <el-form-item label="手机号码" prop="phonenumber">
+      <el-form-item label="学号" prop="phonenumber">
         <el-input
             v-model="queryParams.phonenumber"
-            placeholder="请输入手机号码"
+            placeholder="请输入学号"
             clearable
             style="width: 240px"
             @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
+      <el-form-item label="999" prop="status">
         <el-select
             v-model="queryParams.status"
             placeholder="用户状态"
@@ -75,11 +82,11 @@
 
     <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="50" align="center" />
-      <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
-      <el-table-column label="用户名称" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
+      <el-table-column label="学号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
+      <el-table-column label="姓名" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
       <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-      <el-table-column label="部门" align="center" key="deptName" prop="dept.deptName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
-      <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />
+      <el-table-column label="班级" align="center" key="deptName" prop="dept.deptName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
+      <!--      <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />-->
       <el-table-column label="状态" align="center" key="status" v-if="columns[5].visible">
         <template v-slot="scope">
           <el-switch
@@ -144,8 +151,8 @@
 
 
     <!-- 添加或修改用户配置对话框 -->
-    <el-dialog :title="title" v-model="open" width="600px" append-to-body>
-      <el-form  label-width="80px">
+    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
+      <el-form ref="form" :model="form" label-width="80px">
         <el-row>
           <el-col :span="12">
             <el-form-item label="用户昵称" prop="nickName">
@@ -178,6 +185,18 @@
           </el-col>
         </el-row>
         <el-row>
+          <el-col :span="12">
+            <el-form-item label="用户性别">
+              <el-select v-model="form.sex" placeholder="请选择性别">
+                <el-option
+                    v-for="dict in dict.type.sys_user_sex"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
           <el-col :span="12">
             <el-form-item label="状态">
               <el-radio-group v-model="form.status">
@@ -214,10 +233,9 @@
 import {reactive, ref} from "vue";
 import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
 import Pagination from "@/components/Pagination/index.vue";
-import {addUser, changeUserStatus, getUser, listUser, updateUser} from "@/api/user/index.js";
-import {resetForm} from "@/utils/form.js";
+import {addUser, changeUserStatus, getUser, listUser, updateUser, classUser} from "@/api/user/index.js";
+// import {resetForm} from "@/utils/form.js";
 import RightToolbar from "@/components/RightToolbar/index.vue";
-import _ from "lodash"
 
 const loading =  ref(true);
 // 选中数组
@@ -232,6 +250,8 @@ const showSearch = ref(true);
 const total = ref(0);
 // 用户表格数据
 const userList = ref([]);
+// 班级表格数据
+const classList = ref([]);
 // 弹出层标题
 const title =  ref("");
 
@@ -242,28 +262,15 @@ const open = ref(false);
 const initPassword = ref("");
 
 // 表单参数
-const form = reactive({
-  userId: undefined,
-  deptId: undefined,
-  userName: undefined,
-  nickName: undefined,
-  password: undefined,
-  phonenumber: undefined,
-  email: undefined,
-  sex: undefined,
-  status: "0",
-  remark: undefined,
-  postIds: [],
-  roleIds: []
-});
+const form = ref({});
 
 const queryParams = reactive( {
-      pageNum: 1,
-      pageSize: 10,
-      userName: undefined,
-      phonenumber: undefined,
-      status: undefined,
-      deptId: undefined
+  pageNum: 1,
+  pageSize: 10,
+  userName: undefined,
+  phonenumber: undefined,
+  status: undefined,
+  deptId: undefined
 });
 // 列信息
 const columns = reactive([
@@ -279,9 +286,7 @@ const columns = reactive([
 
 const getList = () => {
   loading.value = true;
-  reset() ; // 重置表单
   listUser(queryParams).then(response => {
-        // console.log(response)
         userList.value = response.rows;
         total.value = response.total;
         loading.value = false;
@@ -289,6 +294,16 @@ const getList = () => {
   );
 };
 
+const getClass = () => {
+  loading.value = true;
+  reset();
+  classUser().then(response => {
+    console.log("班级信息")
+    console.log(response)
+    classList.value = response
+    loading.value = false;
+  })
+}
 
 
 // 用户状态修改
@@ -310,7 +325,7 @@ const cancel = () => {
 
 // 表单重置
 const reset = () => {
-  const f = {
+  form.value = {
     userId: undefined,
     deptId: undefined,
     userName: undefined,
@@ -324,8 +339,7 @@ const reset = () => {
     postIds: [],
     roleIds: []
   };
-  _.assign(form, f)
-
+  // resetForm("form");
 };
 
 /** 搜索按钮操作 */
@@ -335,6 +349,7 @@ const handleQuery = () => {
 };
 /** 重置按钮操作 */
 const resetQuery = () => {
+  // resetForm("queryForm");
   queryParams.deptId = undefined;
   handleQuery();
 };
@@ -360,16 +375,18 @@ const handleCommand = (command, row) => {
 /** 新增按钮操作 */
 const handleAdd = () => {
   reset();
-  open.value = true;
-  title.value = "添加用户";
-  form.password = initPassword;
+  getUser().then(response => {
+    open.value = true;
+    title.value = "添加用户";
+    form.password = initPassword;
+  });
 };
 /** 修改按钮操作 */
 const handleUpdate = (row) => {
   reset();
   const userId = row.userId || ids;
   getUser(userId).then(response => {
-    __.assign(form, response);
+    form.value = response.data;
     open.value = true;
     title.value = "修改用户";
     form.password = "";
@@ -415,4 +432,5 @@ const handleDelete = (row) => {
 
 // created
 getList();
+getClass();
 </script>
