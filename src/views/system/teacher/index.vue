@@ -67,11 +67,14 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" :columns="columns" style="margin-left: auto"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="classList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="teacherList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="50" align="center" />
-      <el-table-column label="专业名称" align="center" key="major.majorName" prop="major.majorName" v-if="columns[0].visible" />
-      <el-table-column label="班级" align="center" key="className" prop="className" v-if="columns[1].visible" :show-overflow-tooltip="true" />
-      <el-table-column label="学院名称" align="center" key="major.institution" prop="major.institution" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+      <el-table-column label="用户id" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
+      <el-table-column label="工号" align="center" key="workNumber" prop="workNumber" v-if="columns[1].visible" :show-overflow-tooltip="true" />
+      <el-table-column label="姓名" align="center" key="username" prop="username" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+      <el-table-column label="性别" align="center" key="gender" prop="gender" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+      <el-table-column label="生日" align="center" key="birthday" prop="birthday" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+      <el-table-column label="职称" align="center" key="title" prop="title" v-if="columns[2].visible" :show-overflow-tooltip="true" />
 
       <el-table-column
           label="操作"
@@ -81,7 +84,7 @@
 
       >
         <template v-slot="scope">
-          <div  v-if="scope.row.classId !== 1" style="display: flex">
+          <div  v-if="scope.row.userId !== 1" style="display: flex">
             <el-link
                 type="primary"
                 icon="edit"
@@ -126,32 +129,56 @@
       <el-form  label-width="80px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="班级id" prop="classId">
-              <el-input v-model="form.classId" placeholder="请输入班级id" maxlength="30" />
+            <el-form-item label="工号" prop="workNumber">
+              <el-input v-model="form.workNumber" placeholder="请输入工号" maxlength="30" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="姓名" prop="username">
+              <el-input v-model="form.username" placeholder="请输入姓名" maxlength="30" />
             </el-form-item>
           </el-col>
         </el-row>
-
         <el-row>
           <el-col :span="12">
-            <el-form-item label="专业" prop="majorId">
+            <el-form-item label="职称" prop="title">
+              <el-input v-model="form.title" placeholder="请输入职称" maxlength="30" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="院系" prop="institution">
+              <el-input v-model="form.institution" placeholder="请输入学院" maxlength="30" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="生日" prop="birthday">
+              <el-input v-model="form.birthday" placeholder="请输入生日" maxlength="30" />
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="性别" >
               <el-select
-                  v-model="form.majorId"
-                  placeholder="选择专业"
+                  v-model="form.gender"
+                  placeholder="选择性别"
                   clearable
                   style="width: 240px"
               >
                 <el-option
-                    v-for="dict of classList"
-                    :key="dict.majorId"
-                    :label="dict.major.majorName"
-                    :value="dict.major.majorId"
+                    v-for="dict in [{label: 'Male', value: 0},
+                    {label: 'Female', value: 1}]"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
                 />
               </el-select>
             </el-form-item>
           </el-col>
         </el-row>
 
+<!--        todo-->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
