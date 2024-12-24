@@ -6,3 +6,11 @@ export const fetchMyScore = () => {
         method: 'GET'
     })
 }
+
+
+export const dropCourse = (ids) => {
+    return service({
+        url: '/student/course/drop/' + ids,
+        method: 'delete'
+    })
+}

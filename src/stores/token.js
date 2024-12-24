@@ -5,14 +5,17 @@ export const useToken = defineStore('token', () => {
     const token = ref("")
 
     const getToken = () => {
+
         return token.value
     }
 
     const setToken = (token_) => {
+        console.log("set token")
         token.value = token_
     }
 
     const clearToken = () => {
+        console.log("clear token")
         token.value = "";
     }
 

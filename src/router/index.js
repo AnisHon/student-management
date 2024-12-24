@@ -42,7 +42,20 @@ export const constRouters = [
                 title: "成绩查询",
                 icon: "Money"
               }
-            }
+            },
+            {
+              path: 'enroll',
+              name: 'Enroll',
+              component: () => import('@/views/student/enroll'),
+              meta: {
+                title: "选课",
+                icon: "Money"
+              }
+            },
+
+
+
+
           ],
         },
         {
