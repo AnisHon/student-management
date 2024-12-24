@@ -84,7 +84,7 @@ const image = ref("")
 const rules = reactive({
   workNumber: [
     { required: true, message: '请输入工号/学号', trigger: 'blur' },
-    { min: 5, max: 15, message: '学号长度只能在 5 到 15 之间', trigger: 'blur'},
+    { min: 2, max: 15, message: '学号长度只能在 5 到 15 之间', trigger: 'blur'},
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur'},

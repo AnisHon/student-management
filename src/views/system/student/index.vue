@@ -137,8 +137,8 @@
     <pagination
         v-show="total>0"
         :total="total"
-        :page.sync="queryParams.pageNum"
-        :limit.sync="queryParams.pageSize"
+        v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize"
         @pagination="getList"
 
     />
@@ -286,6 +286,8 @@ const initPassword = ref("");
 // 表单参数
 const form = ref({});
 
+
+
 const queryParams = reactive( {
   pageNum: 1,
   pageSize: 10,
@@ -413,7 +415,7 @@ const handleAdd = () => {
 /** 修改按钮操作 */
 const handleUpdate = (row) => {
   reset();
-  const userId = row.userId || ids;
+  const userId = row.userId || ids.value;
   getStudent(userId).then(response => {
     form.value = response;
     open.value = true;
@@ -425,16 +427,32 @@ const handleResetPwd = (row) => {
   ElNotification.info("你猜我实现了吗")
 }
 
+
+
 /** 提交按钮 */
 const submitForm = () => {
-  if (form.value.userId !== undefined) {
-    updateStudent(form.value).then(response => {
+
+  const submit = ref({
+    birthday: form.value.birthday,
+    classId: form.value.classId,
+    gender: form.value.gender,
+    majorId: form.value.majorId,
+    password: form.value.password,
+    status: form.value.password,
+    userId: form.value.userId,
+    username: form.value.username,
+    workNumber: form.value.workNumber
+  })
+
+  console.log("提交修改",submit)
+  if (submit.value.userId !== undefined) {
+    updateStudent(submit.value).then(response => {
       ElMessage.success("修改成功");
       open.value = false;
       getList();
     });
   } else {
-    addStudent(form.value).then(response => {
+    addStudent(submit.value).then(response => {
       ElMessage.success("新增成功")
       open.value = false;
       getList();

@@ -3,7 +3,7 @@
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="用户名称" prop="userName">
         <el-input
-            v-model="queryParams.userName"
+            v-model="queryParams.username"
             placeholder="请输入用户名称"
             clearable
             style="width: 240px"
@@ -12,7 +12,7 @@
       </el-form-item>
       <el-form-item label="用户ID" prop="userId">
         <el-input
-            v-model="queryParams.phonenumber"
+            v-model="queryParams.userId"
             placeholder="请输入用户Id"
             clearable
             style="width: 240px"
@@ -123,7 +123,7 @@
       <el-table-column label="姓名" align="center" key="username" prop="username" v-if="columns[2].visible" :show-overflow-tooltip="true" />
       <el-table-column label="性别" align="center" key="gender" prop="gender" v-if="columns[3].visible" :show-overflow-tooltip="true" />
       <el-table-column label="生日" align="center" key="birthday" prop="birthday" v-if="columns[4].visible" width="120" />
-      <el-table-column label="角色" align="center" key="role" prop="role" v-if="columns[5].visible" width="120" />
+      <el-table-column label="角色" align="center" key="role" prop="role" v-if="columns[5].visible" width="120" :formatter="roleFormatter" />
       <el-table-column label="用户状态" align="center" key="status" v-if="columns[6].visible">
         <template v-slot="scope">
           <el-switch
@@ -180,8 +180,8 @@
     <pagination
         v-show="total>0"
         :total="total"
-        :page.sync="queryParams.pageNum"
-        :limit.sync="queryParams.pageSize"
+        v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize"
         @pagination="getList"
 
     />
@@ -205,27 +205,17 @@
 
         <el-row>
           <el-col :span="12">
-            <el-form-item v-if="form.userId === undefined" label="用户密码" prop="password">
+<!--            v-if="form.userId === undefined"-->
+            <el-form-item  label="用户密码" prop="password">
               <el-input v-model="form.password" placeholder="请输入用户密码" type="password" maxlength="20" show-password/>
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="false">
-            <el-form-item label="角色" prop="role">
-              <el-select
-                  v-model="form.role"
-                  placeholder="role"
-                  clearable
-                  style="width: 240px"
-              >
-                <el-option
-                    v-for="dict in [{value: 20, label: 'Admin'}]"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
-                />
-              </el-select>
+          <el-col :span="12">
+            <el-form-item label="工号" prop="workNumber">
+              <el-input v-model="form.workNumber" placeholder="请输入工号" maxlength="11" />
             </el-form-item>
           </el-col>
+
         </el-row>
         <el-row>
           <el-col :span="12">
@@ -236,6 +226,7 @@
                     {value: 1, label: 'Banned'}]"
                     :key="dict.value"
                     :label="dict.label"
+                    :value="dict.value"
                 >{{dict.label}}</el-radio>
               </el-radio-group>
             </el-form-item>
@@ -248,20 +239,13 @@
                     {value: 1, label: 'Female'}]"
                     :key="dict.value"
                     :label="dict.label"
+                    :value="dict.value"
                 >{{dict.label}}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
-        </el-row>
-<!--        <el-row>-->
-<!--          <el-col :span="24">-->
-<!--            <el-form-item label="备注">-->
-<!--              <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>-->
-<!--            </el-form-item>-->
-<!--          </el-col>-->
-<!--        </el-row>-->
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">提 交</el-button>
@@ -278,7 +262,6 @@ import {reactive, ref} from "vue";
 import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
 import Pagination from "@/components/Pagination/index.vue";
 import {addUser, changeUserStatus, getUser, listUser, updateUser, delUser} from "@/api/user/index.js";
-// import {resetForm} from "@/utils/form.js";
 import RightToolbar from "@/components/RightToolbar/index.vue";
 import _ from "lodash"
 
@@ -310,23 +293,21 @@ const form = reactive({
   username: undefined,
   workNumber:undefined,
   password: undefined,
-  status: "0",
-  role: 20,
+  status: undefined,
   gender:undefined,
   birthday:undefined,
-  creatTime:undefined,
-  updateTime:undefined,
 });
 
 const queryParams = reactive( {
       pageNum: 1,
       pageSize: 10,
       username: undefined,
-      phonenumber: undefined,
       status: undefined,
       deptId: undefined,
       workNumber: undefined,
       gender: undefined,
+      userId:undefined,
+      role:undefined,
 });
 // 列信息
 const columns = reactive([
@@ -339,6 +320,18 @@ const columns = reactive([
   { key: 6, label: `用户状态`, visible: true },
   { key: 7, label: `创建时间`, visible: true }
 ])
+
+// 角色信息
+const roleMap = {
+  1: '学生',
+  5: '辅导员',
+  10: '教师',
+  20: '管理员'
+};
+const roleFormatter = (row, column, cellValue, index) => {
+  return roleMap[cellValue] || '未知角色';
+};
+
 
 const getList = () => {
   loading.value = true;
@@ -374,17 +367,12 @@ const cancel = () => {
 const reset = () => {
   const f = {
     userId: undefined,
-    deptId: undefined,
-    userName: undefined,
-    nickName: undefined,
+    username: undefined,
+    workNumber:undefined,
     password: undefined,
-    phonenumber: undefined,
-    email: undefined,
-    sex: undefined,
     status: undefined,
-    remark: undefined,
-    postIds: [],
-    roleIds: []
+    gender:undefined,
+    birthday:undefined,
   };
   _.assign(form, f)
 
@@ -431,8 +419,8 @@ const handleAdd = () => {
 const handleUpdate = (row) => {
   reset();
 
-  const userId = row.userId || ids.value;
-  // userId = !!userId.value ? userId.value : userId;
+  let userId = row.userId || ids.value;
+  userId = !!userId.value ? userId.value : userId;
   getUser(userId).then(response => {
     _.assign(form, response);
     open.value = true;
@@ -448,13 +436,17 @@ const handleResetPwd = (row) => {
 
 /** 提交按钮 */
 const submitForm = () => {
+  console.log("提交修改",form)
+
   if (form.userId !== undefined) {
+    console.log(form);
     updateUser(form).then(response => {
       ElMessage.success("修改成功");
       open.value = false;
       getList();
     });
   } else {
+    console.log(form);
     addUser(form).then(response => {
       ElMessage.success("新增成功")
       open.value = false;

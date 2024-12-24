@@ -119,8 +119,8 @@
     <pagination
         v-show="total>0"
         :total="total"
-        :page.sync="queryParams.pageNum"
-        :limit.sync="queryParams.pageSize"
+        v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize"
         @pagination="getList"
 
     />
@@ -232,11 +232,6 @@ const getList = () => {
   );
 };
 
-
-// 1871390885258567682
-// bao
-// 1871390936064172033
-// gexin
 
 // 用户状态修改
 const handleStatusChange = (row) => {
