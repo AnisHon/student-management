@@ -3,7 +3,7 @@ import axios from "axios";
 // import {userData} from "@/mookjs/test.js";
 
 // userData.setup()
-import { Mock } from '@/mookjs/test.js'
+// import { Mock } from '@/mookjs/test.js'
 
 
 const listUser = (query) => {
@@ -39,7 +39,7 @@ const listMajor = (query) => {
 
 const getUser = (userId) => {
     return service({
-        url: '/system/user/' + parseStrEmpty(userId),
+        url: '/system/user/' +userId,
         method: 'get'
     })
 }

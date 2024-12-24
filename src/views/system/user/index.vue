@@ -10,10 +10,19 @@
             @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="手机号码" prop="phonenumber">
+      <el-form-item label="用户ID" prop="userId">
         <el-input
             v-model="queryParams.phonenumber"
-            placeholder="请输入手机号码"
+            placeholder="请输入用户Id"
+            clearable
+            style="width: 240px"
+            @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="工号" prop="workNumber">
+        <el-input
+            v-model="queryParams.workNumber"
+            placeholder="请输入工号"
             clearable
             style="width: 240px"
             @keyup.enter.native="handleQuery"
@@ -28,6 +37,40 @@
         >
           <el-option
               v-for="dict in [{value: 1, label:1}]"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="角色" prop="role">
+        <el-select
+            v-model="queryParams.role"
+            placeholder="角色"
+            clearable
+            style="width: 240px"
+        >
+          <el-option
+              v-for="dict in [{value: 1, label:'Student'},
+              {value: 5, label: 'Instructor'},
+              {value: 10, label: 'Teacher'},
+              {value: 20, label: 'Admin'}]"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="性别" prop="gender">
+        <el-select
+            v-model="queryParams.gender"
+            placeholder="性别"
+            clearable
+            style="width: 240px"
+        >
+          <el-option
+              v-for="dict in [{value: 0, label:'Male'},
+              {value: 1, label: 'Female'}]"
               :key="dict.value"
               :label="dict.label"
               :value="dict.value"
@@ -75,12 +118,13 @@
 
     <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="50" align="center" />
-      <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
-      <el-table-column label="用户名称" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
-      <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-      <el-table-column label="部门" align="center" key="deptName" prop="dept.deptName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
-      <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />
-      <el-table-column label="状态" align="center" key="status" v-if="columns[5].visible">
+      <el-table-column label="用户id" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
+      <el-table-column label="工号" align="center" key="workNumber" prop="workNumber" v-if="columns[1].visible" :show-overflow-tooltip="true" />
+      <el-table-column label="姓名" align="center" key="username" prop="username" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+      <el-table-column label="性别" align="center" key="gender" prop="gender" v-if="columns[3].visible" :show-overflow-tooltip="true" />
+      <el-table-column label="生日" align="center" key="birthday" prop="birthday" v-if="columns[4].visible" width="120" />
+      <el-table-column label="角色" align="center" key="role" prop="role" v-if="columns[5].visible" width="120" />
+      <el-table-column label="用户状态" align="center" key="status" v-if="columns[6].visible">
         <template v-slot="scope">
           <el-switch
               v-model="scope.row.status"
@@ -148,32 +192,38 @@
       <el-form  label-width="80px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="用户昵称" prop="nickName">
-              <el-input v-model="form.nickName" placeholder="请输入用户昵称" maxlength="30" />
+            <el-form-item label="姓名" prop="username">
+              <el-input v-model="form.username" placeholder="请输入姓名" maxlength="30" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="生日" prop="birthday">
+              <el-input v-model="form.birthday" placeholder="请输入生日" maxlength="11" />
             </el-form-item>
           </el-col>
         </el-row>
+
         <el-row>
-          <el-col :span="12">
-            <el-form-item label="手机号码" prop="phonenumber">
-              <el-input v-model="form.phonenumber" placeholder="请输入手机号码" maxlength="11" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="邮箱" prop="email">
-              <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="50" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item v-if="form.userId === undefined" label="用户名称" prop="userName">
-              <el-input v-model="form.userName" placeholder="请输入用户名称" maxlength="30" />
-            </el-form-item>
-          </el-col>
           <el-col :span="12">
             <el-form-item v-if="form.userId === undefined" label="用户密码" prop="password">
               <el-input v-model="form.password" placeholder="请输入用户密码" type="password" maxlength="20" show-password/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" v-if="false">
+            <el-form-item label="角色" prop="role">
+              <el-select
+                  v-model="form.role"
+                  placeholder="role"
+                  clearable
+                  style="width: 240px"
+              >
+                <el-option
+                    v-for="dict in [{value: 20, label: 'Admin'}]"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -182,9 +232,22 @@
             <el-form-item label="状态">
               <el-radio-group v-model="form.status">
                 <el-radio
-                    v-for="dict in []"
+                    v-for="dict in [{value: 0, label: 'Normal'},
+                    {value: 1, label: 'Banned'}]"
                     :key="dict.value"
-                    :label="dict.value"
+                    :label="dict.label"
+                >{{dict.label}}</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="性别">
+              <el-radio-group v-model="form.gender">
+                <el-radio
+                    v-for="dict in [{value: 0, label: 'Male'},
+                    {value: 1, label: 'Female'}]"
+                    :key="dict.value"
+                    :label="dict.label"
                 >{{dict.label}}</el-radio>
               </el-radio-group>
             </el-form-item>
@@ -192,13 +255,13 @@
         </el-row>
         <el-row>
         </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="备注">
-              <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
+<!--        <el-row>-->
+<!--          <el-col :span="24">-->
+<!--            <el-form-item label="备注">-->
+<!--              <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
+<!--        </el-row>-->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -214,7 +277,7 @@
 import {reactive, ref} from "vue";
 import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
 import Pagination from "@/components/Pagination/index.vue";
-import {addUser, changeUserStatus, getUser, listUser, updateUser} from "@/api/user/index.js";
+import {addUser, changeUserStatus, getUser, listUser, updateUser, delUser} from "@/api/user/index.js";
 // import {resetForm} from "@/utils/form.js";
 import RightToolbar from "@/components/RightToolbar/index.vue";
 import _ from "lodash"
@@ -244,17 +307,15 @@ const initPassword = ref("");
 // 表单参数
 const form = reactive({
   userId: undefined,
-  deptId: undefined,
-  userName: undefined,
-  nickName: undefined,
+  username: undefined,
+  workNumber:undefined,
   password: undefined,
-  phonenumber: undefined,
-  email: undefined,
-  sex: undefined,
   status: "0",
-  remark: undefined,
-  postIds: [],
-  roleIds: []
+  role: 20,
+  gender:undefined,
+  birthday:undefined,
+  creatTime:undefined,
+  updateTime:undefined,
 });
 
 const queryParams = reactive( {
@@ -267,13 +328,14 @@ const queryParams = reactive( {
 });
 // 列信息
 const columns = reactive([
-  { key: 0, label: `用户编号`, visible: true },
-  { key: 1, label: `用户名称`, visible: true },
-  { key: 2, label: `用户昵称`, visible: true },
-  { key: 3, label: `部门`, visible: true },
-  { key: 4, label: `手机号码`, visible: true },
-  { key: 5, label: `状态`, visible: true },
-  { key: 6, label: `创建时间`, visible: true }
+  { key: 0, label: `用户id`, visible: true },
+  { key: 1, label: `工号`, visible: true },
+  { key: 2, label: `姓名`, visible: true },
+  { key: 3, label: `性别`, visible: true },
+  { key: 4, label: `生日`, visible: true },
+  { key: 5, label: `角色`, visible: true },
+  { key: 6, label: `用户状态`, visible: true },
+  { key: 7, label: `创建时间`, visible: true }
 ])
 
 
@@ -283,7 +345,7 @@ const getList = () => {
   listUser(queryParams).then(response => {
         // console.log(response)
         userList.value = response.rows;
-        total.value = response.total;
+        total.value = Number(response.total);
         loading.value = false;
       }
   );
@@ -319,7 +381,7 @@ const reset = () => {
     phonenumber: undefined,
     email: undefined,
     sex: undefined,
-    status: "0",
+    status: undefined,
     remark: undefined,
     postIds: [],
     roleIds: []
@@ -362,17 +424,15 @@ const handleAdd = () => {
   reset();
   open.value = true;
   title.value = "添加用户";
-  form.password = initPassword;
 };
 /** 修改按钮操作 */
 const handleUpdate = (row) => {
   reset();
   const userId = row.userId || ids;
-  getUser(userId).then(response => {
-    __.assign(form, response);
+  getUser(userId.value).then(response => {
+    _.assign(form, response);
     open.value = true;
     title.value = "修改用户";
-    form.password = "";
   });
 };
 /** 重置密码按钮操作 */
