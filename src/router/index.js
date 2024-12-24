@@ -97,15 +97,9 @@ export const constRouters = [
       {
         path: "login",
         name: 'Login',
+        component: () => import("@/views/login"),
         meta: {
           title: "登录"
-        }
-      },
-      {
-        path: "register",
-        name: 'Register',
-        meta: {
-          title: "注册"
         }
       },
     ]
