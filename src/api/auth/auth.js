@@ -25,6 +25,13 @@ const getCaptcha = () => {
     })
 }
 
+const login = (loginForm) => {
+    return service({
+        url: "/auth/login",
+        method: "POST",
+        data: loginForm
+    })
+}
 
 export {
     PUBLIC,
@@ -33,5 +40,6 @@ export {
     INSTRUCTOR,
     ADMIN,
     logout,
-    getCaptcha
+    getCaptcha,
+    login
 }

@@ -1,6 +1,6 @@
 <template>
   <el-container style="height: 100vh">
-    <el-aside class="collapse-item" :class="{'collapse': isCollapse}" style="background-color: #304156">
+    <el-aside class="collapse-item" :class="{'collapse': isCollapse}" style="background-color: #304156; max-width: 250px;">
       <router-menu :collapse="isCollapse"/>
     </el-aside>
     <el-container >
@@ -8,8 +8,8 @@
         <ul style="display: flex; align-items: center;">
           <li>
             <el-icon size="24px" @click="isCollapse = !isCollapse"  class="collapse-button">
-              <DArrowRight  v-show="isCollapse"/>
-              <DArrowLeft v-show="!isCollapse"/>
+              <Expand  v-show="isCollapse"/>
+              <Fold v-show="!isCollapse"/>
             </el-icon>
           </li>
 
@@ -61,7 +61,7 @@
 <script setup>
 import RouterMenu from "@/components/RouterMenu/index.vue"
 import Breadcrumb from "@/components/Breadcrumb/index.vue"
-import {DArrowLeft, DArrowRight} from "@element-plus/icons-vue";
+import {Expand, Fold} from "@element-plus/icons-vue";
 import {provide, ref} from "vue";
 import {useDark} from "@vueuse/core";
 import {useRoute} from "vue-router";

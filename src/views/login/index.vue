@@ -1,19 +1,23 @@
 <template>
-  <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-    <el-card>
-      <h1 style="text-align: center">不欢迎登陆</h1>
+  <div class="container">
+    <el-card body-style="">
+
+      <div style="text-align: center">
+        <el-image src="/login.png" style="max-width: 200px" />
+      </div>
+      <h1 style="text-align: center; font-weight: 400;">不欢迎登陆</h1>
+      <p style="text-align: center">滚出去，让你飞起来</p>
       <el-form
           ref="ruleFormRef"
           style="max-width: 600px; min-width: 400px"
           :model="loginForm"
           :rules="rules"
-          :size="formSize"
           status-icon
       >
         <el-row :gutter="20" class="item">
           <el-col :span="24">
             <el-form-item  prop="workNumber" >
-              <el-input size="large" v-model="loginForm.name" placeholder="请输入工号/学号" prefix-icon="userFilled"/>
+              <el-input size="large" v-model="loginForm.workNumber" placeholder="请输入工号/学号" prefix-icon="userFilled"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -31,11 +35,11 @@
         <el-row :gutter="20" class="item">
           <el-col :span="12">
             <el-form-item class="item" prop="code">
-              <el-input size="large" type="password" v-model="loginForm.code" />
+              <el-input size="large" type="password" :prefix-icon="IconCaptcha" v-model="loginForm.code"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-image :src="image" @click="flushCaptcha"/>
+            <el-image style="display: block; max-width: 150px; margin-left: auto;" :src="image"  @click="flushCaptcha" alt="验证码"/>
           </el-col>
 
         </el-row>
@@ -43,7 +47,7 @@
 
       </el-form>
       <div class="submit-btn" style="text-align: center" >
-        <el-button type="success" @click="submitForm(ruleFormRef)" style="min-width: 80%">
+        <el-button type="success" size="large" @click="submitForm(ruleFormRef)" style="min-width: 80%">
           登&nbsp;&nbsp;&nbsp;陆
         </el-button>
       </div>
@@ -56,12 +60,19 @@
 
 <script setup>
 import { reactive, ref } from 'vue'
-import {getCaptcha} from "@/api/auth/auth.js";
+import {getCaptcha, login} from "@/api/auth/auth.js";
+import IconCaptcha from "@/assets/icons/IconCaptcha.vue";
+import {ElNotification} from "element-plus";
+import {useRouter} from "vue-router";
+import {useToken} from "@/stores/token.js";
 
-const formSize = ref('default')
+const router = useRouter();
+const tokenStore = useToken();
+
+
 const ruleFormRef = ref()
 const loginForm = reactive({
-  name: '',
+  workNumber: '',
   password: '',
   token: '',
   code: '',
@@ -88,11 +99,25 @@ const submitForm = async (formEl) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
     if (valid) {
-      console.log('submit!')
+      doLogin();
     } else {
-      console.log('error submit!', fields)
+      ElNotification.warning("请检查表单")
     }
   })
+}
+// 10001
+// 12345678
+const doLogin = async () => {
+
+  const {success, message, token} = await login(loginForm);
+  if (success) {
+    ElNotification.success("登陆成功");
+    router.replace("/");
+    tokenStore.setToken(token);
+  } else {
+    ElNotification.error(message);
+    flushCaptcha();
+  }
 }
 
 
@@ -100,7 +125,6 @@ const flushCaptcha = async () => {
   const {token, img} = await getCaptcha();
   image.value = img;
   loginForm.token = token;
-  console.log(img)
 }
 
 
@@ -114,5 +138,13 @@ flushCaptcha();
 
 .submit-btn {
   margin: 50px 0;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
 }
 </style>
