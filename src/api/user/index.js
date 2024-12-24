@@ -60,6 +60,13 @@ const getUser = (userId) => {
     })
 }
 
+const getStudent = (userId) => {
+    return service({
+        url: '/system/student/' +userId,
+        method: 'get'
+    })
+}
+
 const getClass = (classId) => {
     return service({
         url: '/system/class/' +classId,
@@ -179,13 +186,14 @@ export {
     listClassAll,
     addClass,
     updateClass,
+    delClass,
     listStudent,
+    addStudent,
+    updateStudent,
+    delStudent,
+    getStudent,
     listMajor,
     listMajorAll,
     addMajor,
     updateMajor,
-    addStudent,
-    updateStudent,
-    delStudent,
-    delClass,
 }

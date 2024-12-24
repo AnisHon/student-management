@@ -27,9 +27,9 @@
             style="width: 240px"
         >
           <el-option
-              v-for="dict of classList"
+              v-for="dict of majorListAll"
               :key="dict.majorId"
-              :label="dict.major.majorName"
+              :label="dict.majorName"
               :value="dict.majorId"
           />
         </el-select>
@@ -49,15 +49,6 @@
           />
         </el-select>
       </el-form-item>
-<!--      <el-form-item label="班级" prop="phonenumber">-->
-<!--        <el-input-->
-<!--            v-model="queryParams.phonenumber"-->
-<!--            placeholder="请输入班级"-->
-<!--            clearable-->
-<!--            style="width: 240px"-->
-<!--            @keyup.enter.native="handleQuery"-->
-<!--        />-->
-<!--      </el-form-item>-->
 
       <el-form-item>
         <el-button type="primary" icon="search" @click="handleQuery">搜索</el-button>
@@ -107,17 +98,11 @@
       <el-table-column label="专业" align="center" key="majorName" prop="majorName" v-if="columns[5].visible" :show-overflow-tooltip="true" />
       <el-table-column label="班级" align="center" key="className" prop="className" v-if="columns[6].visible" :show-overflow-tooltip="true" />
 
-<!--      <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">-->
-<!--        <template v-slot="scope">-->
-<!--          <span>{{ scope.row.createTime }}</span>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
       <el-table-column
           label="操作"
           align="center"
           width="160"
           class-name="small-padding fixed-width"
-
       >
         <template v-slot="scope">
           <div  v-if="scope.row.userId !== 1" style="display: flex">
@@ -145,7 +130,6 @@
             </el-dropdown>
           </div>
 
-
         </template>
       </el-table-column>
     </el-table>
@@ -158,7 +142,6 @@
         @pagination="getList"
 
     />
-
 
     <!-- 添加或修改用户配置对话框 -->
     <el-dialog :title="title" v-model="open" width="600px" append-to-body>
@@ -268,7 +251,8 @@ import {
   updateUser,
   listStudent,
   listClass,
-  updateStudent, addStudent, delStudent
+  updateStudent, addStudent, delStudent, listMajorAll,
+  getStudent,
 } from "@/api/user/index.js";
 // import {resetForm} from "@/utils/form.js";
 import RightToolbar from "@/components/RightToolbar/index.vue";
@@ -288,6 +272,8 @@ const total = ref(0);
 const userList = ref([]);
 // 班级数据
 const classList = ref([]);
+// 专业数据
+const majorListAll = ref([])
 // 弹出层标题
 const title =  ref("");
 
@@ -319,7 +305,7 @@ const columns = reactive([
   { key: 6, label: `班级`, visible: true }
 ])
 
-
+// 获取学生表
 const getList = () => {
   loading.value = true;
   listStudent(queryParams).then(response => {
@@ -330,13 +316,23 @@ const getList = () => {
   );
 };
 
+// 搜索区域中的班级
 const getClass = () => {
   loading.value = true;
-  // reset();
-  listClass().then(response => {
-    console.log("班级信息")
-    console.log(response)
-    classList.value = response;
+  listClass(queryParams).then(response => {
+        classList.value = response.rows;
+        total.value = Number(response.total);
+        loading.value = false;
+      }
+  );
+}
+
+// 搜索区域中的专业
+const getMajor = () => {
+  loading.value = true;
+  reset();
+  listMajorAll().then(response => {
+    majorListAll.value = response;
     loading.value = false;
   })
 }
@@ -418,8 +414,8 @@ const handleAdd = () => {
 const handleUpdate = (row) => {
   reset();
   const userId = row.userId || ids;
-  getUser(userId.value).then(response => {
-    form.value = response.data;
+  getStudent(userId).then(response => {
+    form.value = response;
     open.value = true;
     title.value = "修改学生信息";
   });
@@ -466,4 +462,5 @@ const handleDelete = (row) => {
 // getStudent();
 getList();
 getClass();
+getMajor();
 </script>
