@@ -23,12 +23,12 @@
           </li>
 
           <li style="margin: 0 10px">
-            <el-dropdown>
+            <el-dropdown @command="handleCommand">
               <el-avatar
                   src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
               />
               <template #dropdown>
-                <el-dropdown-item>
+                <el-dropdown-item command="logout">
                   退出登录
                 </el-dropdown-item>
               </template>
@@ -65,6 +65,7 @@ import {DArrowLeft, DArrowRight} from "@element-plus/icons-vue";
 import {provide, ref} from "vue";
 import {useDark} from "@vueuse/core";
 import {useRoute} from "vue-router";
+import {logout} from "@/api/auth/auth.js";
 
 const isCollapse = ref(true)
 
@@ -75,6 +76,11 @@ provide("elMain", scroll)
 
 const isDark = useDark()
 
+const handleCommand = (command) => {
+  if (command === "logout") {
+    logout();
+  }
+}
 
 
 </script>
