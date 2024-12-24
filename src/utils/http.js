@@ -39,7 +39,7 @@ service.interceptors.request.use(config => {
     config.headers['token'] = token.getToken()
     return config
 }, error => {
-    console.log(error)
+    // console.log(error)
     return Promise.reject(error)
 })
 
@@ -74,6 +74,7 @@ service.interceptors.response.use(res => {
         } else {
 
             console.log("interceptor", res)
+            // console.log(res.data.data)
             return res.data.data
         }
     },

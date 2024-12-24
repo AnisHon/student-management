@@ -180,14 +180,14 @@
             <el-col :span="12">
               <el-form-item label="性别" >
                 <el-select
-                    v-model="queryParams.gender"
+                    v-model="form.gender"
                     placeholder="选择性别"
                     clearable
                     style="width: 240px"
                 >
                   <el-option
-                      v-for="dict in [{label: '男', value: 1},
-                    {label: '女', value: 0}]"
+                      v-for="dict in [{label: 'Male', value: 0},
+                    {label: 'Female', value: 1}]"
                       :key="dict.value"
                       :label="dict.label"
                       :value="dict.value"
@@ -212,7 +212,7 @@
           <el-col :span="12">
             <el-form-item label="专业" prop="majorId">
               <el-select
-                  v-model="queryParams.majorId"
+                  v-model="form.majorId"
                   placeholder="选择专业"
                   clearable
                   style="width: 240px"
@@ -220,7 +220,24 @@
                 <el-option
                     v-for="dict of classList"
                     :key="dict.classId"
-                    :label="dict.major.majorName + dict.className"
+                    :label="dict.major.majorName"
+                    :value="dict.classId"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="班级" prop="classId">
+              <el-select
+                  v-model="form.classId"
+                  placeholder="选择班级"
+                  clearable
+                  style="width: 240px"
+              >
+                <el-option
+                    v-for="dict of classList"
+                    :key="dict.classId"
+                    :label="dict.className"
                     :value="dict.classId"
                 />
               </el-select>
@@ -228,29 +245,6 @@
           </el-col>
         </el-row>
 
-
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="状态">
-              <el-radio-group v-model="form.status">
-                <el-radio
-                    v-for="dict in []"
-                    :key="dict.value"
-                    :label="dict.value"
-                >{{dict.label}}</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="备注">
-              <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -310,9 +304,9 @@ const queryParams = reactive( {
   pageNum: 1,
   pageSize: 10,
   username: undefined,
-  phonenumber: undefined,
-  status: undefined,
-  deptId: undefined
+  userId: undefined,
+  majorId: undefined,
+  classId: undefined,
 });
 // 列信息
 const columns = reactive([
@@ -424,11 +418,10 @@ const handleAdd = () => {
 const handleUpdate = (row) => {
   reset();
   const userId = row.userId || ids;
-  getUser(userId).then(response => {
+  getUser(userId.value).then(response => {
     form.value = response.data;
     open.value = true;
     title.value = "修改学生信息";
-    form.password = "";
   });
 };
 /** 重置密码按钮操作 */
