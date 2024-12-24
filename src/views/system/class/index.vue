@@ -86,7 +86,7 @@
 
       >
         <template v-slot="scope">
-          <div  v-if="scope.row.userId !== 1" style="display: flex">
+          <div  v-if="scope.row.classId !== 1" style="display: flex">
             <el-link
                 type="primary"
                 icon="edit"
@@ -131,8 +131,8 @@
       <el-form  label-width="80px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="班级" prop="classId">
-              <el-input v-model="form.userId" placeholder="请输入班级" maxlength="30" />
+            <el-form-item label="班级id" prop="classId">
+              <el-input v-model="form.classId" placeholder="请输入班级id" maxlength="30" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -141,7 +141,7 @@
           <el-col :span="12">
             <el-form-item label="专业" prop="majorId">
               <el-select
-                  v-model="queryParams.majorId"
+                  v-model="form.majorId"
                   placeholder="选择专业"
                   clearable
                   style="width: 240px"
@@ -172,7 +172,7 @@
 import {reactive, ref} from "vue";
 import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
 import Pagination from "@/components/Pagination/index.vue";
-import {addClass, changeUserStatus, getUser, listClass, updateClass, listClassAll, listMajor, listMajorAll} from "@/api/user/index.js";
+import {addClass, changeUserStatus, getUser, listClass, updateClass, listClassAll, listMajor, listMajorAll, delClass, getClass} from "@/api/user/index.js";
 // import {resetForm} from "@/utils/form.js";
 import RightToolbar from "@/components/RightToolbar/index.vue";
 
@@ -250,14 +250,15 @@ const getMajor = () => {
 // 用户状态修改
 const handleStatusChange = (row) => {
   let text = row.status === "0" ? "启用" : "停用";
-  ElMessageBox.confirm('确认要"' + text + '""' + row.userName + '"用户吗？').then(function() {
-    return changeUserStatus(row.userId, row.status);
+  ElMessageBox.confirm('确认要"' + text + '""' + row.className + '"用户吗？').then(function() {
+    return changeUserStatus(row.classId, row.status);
   }).then(() => {
     ElMessage.success(text + "成功");
   }).catch(function() {
     row.status = row.status === "0" ? "1" : "0";
   });
 };
+
 // 取消按钮
 const cancel = () => {
   open.value = false;
@@ -267,9 +268,9 @@ const cancel = () => {
 // 表单重置
 const reset = () => {
   form.value = {
-    userId: undefined,
+    classId: undefined,
     deptId: undefined,
-    userName: undefined,
+    className: undefined,
     nickName: undefined,
     password: undefined,
     phonenumber: undefined,
@@ -296,7 +297,7 @@ const resetQuery = () => {
 };
 // 多选框选中数据
 const handleSelectionChange = (selection) => {
-  ids.value = selection.map(item => item.userId);
+  ids.value = selection.map(item => item.classId);
   single.value = selection.length !== 1;
   multiple.value = !selection.length;
 };
@@ -313,18 +314,22 @@ const handleCommand = (command, row) => {
       break;
   }
 }
+
 /** 新增按钮操作 */
 const handleAdd = () => {
   reset();
   open.value = true;
   title.value = "新建班级";
 };
+
 /** 修改按钮操作 */
 const handleUpdate = (row) => {
   reset();
-  const userId = row.userId || ids;
-  getUser(userId.value).then(response => {
-    form.value = response.data;
+
+  const classId = row.classId || ids.value;
+  console.log(classId)
+  getClass(classId).then(response => {
+    form.value = response;
     open.value = true;
     title.value = "修改用班级信息";
   });
@@ -336,7 +341,7 @@ const handleResetPwd = (row) => {
 
 /** 提交按钮 */
 const submitForm = () => {
-  if (form.userId !== undefined) {
+  if (form.classId !== undefined) {
     updateClass(form).then(response => {
       ElMessage.success("修改成功");
       open.value = false;
@@ -353,9 +358,9 @@ const submitForm = () => {
 
 /** 删除按钮操作 */
 const handleDelete = (row) => {
-  const userIds = row.userId || ids.value;
-  ElMessageBox.confirm('是否确认删除用户编号为"' + userIds + '"的数据项？').then(function() {
-    return delUser(userIds);
+  const classIds = row.classId || ids.value;
+  ElMessageBox.confirm('是否确认删除用户编号为"' + classIds + '"的数据项？').then(function() {
+    return delClass(classIds);
   }).then(() => {
     getList();
     ElMessage.success("删除成功");

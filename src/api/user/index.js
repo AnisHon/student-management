@@ -60,6 +60,13 @@ const getUser = (userId) => {
     })
 }
 
+const getClass = (classId) => {
+    return service({
+        url: '/system/class/' +classId,
+        method: 'get'
+    })
+}
+
 const delUser = (userId) => {
     return service({
         url: '/system/user/' + userId,
@@ -168,6 +175,7 @@ export {
     updateUser,
     changeUserStatus,
     listClass,
+    getClass,
     listClassAll,
     addClass,
     updateClass,

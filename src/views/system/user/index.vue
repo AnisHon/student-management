@@ -324,7 +324,9 @@ const queryParams = reactive( {
       userName: undefined,
       phonenumber: undefined,
       status: undefined,
-      deptId: undefined
+      deptId: undefined,
+      workNumber: undefined,
+      gender: undefined,
 });
 // 列信息
 const columns = reactive([
@@ -338,7 +340,6 @@ const columns = reactive([
   { key: 7, label: `创建时间`, visible: true }
 ])
 
-
 const getList = () => {
   loading.value = true;
   reset() ; // 重置表单
@@ -351,8 +352,6 @@ const getList = () => {
   );
 };
 
-
-
 // 用户状态修改
 const handleStatusChange = (row) => {
   let text = row.status === "0" ? "启用" : "停用";
@@ -364,6 +363,7 @@ const handleStatusChange = (row) => {
     row.status = row.status === "0" ? "1" : "0";
   });
 };
+
 // 取消按钮
 const cancel = () => {
   open.value = false;
@@ -419,22 +419,28 @@ const handleCommand = (command, row) => {
       break;
   }
 }
+
 /** 新增按钮操作 */
 const handleAdd = () => {
   reset();
   open.value = true;
   title.value = "添加用户";
 };
+
 /** 修改按钮操作 */
 const handleUpdate = (row) => {
   reset();
-  const userId = row.userId || ids;
-  getUser(userId.value).then(response => {
+
+  const userId = row.userId || ids.value;
+  // userId = !!userId.value ? userId.value : userId;
+  getUser(userId).then(response => {
     _.assign(form, response);
     open.value = true;
     title.value = "修改用户";
   });
 };
+
+
 /** 重置密码按钮操作 */
 const handleResetPwd = (row) => {
   ElNotification.info("你猜我实现了吗")
