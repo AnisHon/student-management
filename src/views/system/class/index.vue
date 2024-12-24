@@ -232,15 +232,6 @@ const getList = () => {
   );
 };
 
-const getMajor = () => {
-  loading.value = true;
-  reset();
-  listMajorAll().then(response => {
-    console.log("专业：", response)
-    majorListAll.value = response;
-    loading.value = false;
-  })
-}
 
 // 1871390885258567682
 // bao
@@ -374,5 +365,5 @@ const handleDelete = (row) => {
 
 // created
 getList();
-getMajor();
+
 </script>

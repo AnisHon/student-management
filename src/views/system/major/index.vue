@@ -170,7 +170,8 @@ import {
   listMajor,
   listMajorAll,
   listClass,
-  getMajor
+  getMajor,
+  delMajor
 } from "@/api/user/index.js";
 // import {resetForm} from "@/utils/form.js";
 import RightToolbar from "@/components/RightToolbar/index.vue";
@@ -229,7 +230,7 @@ const getList = () => {
   listMajor(queryParams).then(response => {
     console.log("专业", response)
         userList.value = response.rows;
-        total.value = response.total;
+        total.value = Number(response.total);
         loading.value = false;
       }
   );
@@ -311,13 +312,15 @@ const handleAdd = () => {
 /** 修改按钮操作 */
 const handleUpdate = (row) => {
   reset();
-  const majorId = row.majorId || ids;
+
+  const majorId = row.majorId || ids.value;
   getMajor(majorId).then(response => {
-    form.value = response.data;
+    form.value = response;
     open.value = true;
     title.value = "修改专业";
   });
 };
+
 /** 重置密码按钮操作 */
 const handleResetPwd = (row) => {
   ElNotification.info("你猜我实现了吗")
@@ -329,22 +332,22 @@ const submitForm = () => {
     updateMajor(form.value).then(response => {
       ElMessage.success("修改成功");
       open.value = false;
-      getMajor();
+      getList();
     });
   } else {
     addMajor(form.value).then(response => {
       ElMessage.success("新增成功")
       open.value = false;
-      getMajor();
+      getList();
     });
   }
 }
 
 /** 删除按钮操作 */
 const handleDelete = (row) => {
-  const userIds = row.userId || ids.value;
-  ElMessageBox.confirm('是否确认删除用户编号为"' + userIds + '"的数据项？').then(function() {
-    return delUser(userIds);
+  const majorIds = row.majorId || ids.value;
+  ElMessageBox.confirm('是否确认删除用户编号为"' + majorIds + '"的数据项？').then(function() {
+    return delMajor(majorIds);
   }).then(() => {
     getList();
     ElMessage.success("删除成功");

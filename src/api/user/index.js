@@ -102,6 +102,13 @@ const delClass = (classId) => {
     })
 }
 
+const delMajor = (majorId) => {
+    return service({
+        url:'/system/major/' +majorId,
+        method: 'delete'
+    })
+}
+
 const addUser = (data) => {
     return service({
         url: '/system/user',
@@ -188,21 +195,25 @@ export {
     addUser,
     updateUser,
     changeUserStatus,
+
     listClass,
     getClass,
     listClassAll,
     addClass,
     updateClass,
     delClass,
+
     listStudent,
     addStudent,
     updateStudent,
     delStudent,
     getStudent,
+
     listMajor,
     listMajorAll,
     addMajor,
     updateMajor,
     getMajor,
+    delMajor,
 
 }

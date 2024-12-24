@@ -128,8 +128,8 @@
         <template v-slot="scope">
           <el-switch
               v-model="scope.row.status"
-              active-value="0"
-              inactive-value="1"
+              :active-value="0"
+              :inactive-value="1"
               @change="handleStatusChange(scope.row)"
           ></el-switch>
         </template>
@@ -321,7 +321,7 @@ const form = reactive({
 const queryParams = reactive( {
       pageNum: 1,
       pageSize: 10,
-      userName: undefined,
+      username: undefined,
       phonenumber: undefined,
       status: undefined,
       deptId: undefined,
@@ -355,7 +355,7 @@ const getList = () => {
 // 用户状态修改
 const handleStatusChange = (row) => {
   let text = row.status === "0" ? "启用" : "停用";
-  ElMessageBox.confirm('确认要"' + text + '""' + row.userName + '"用户吗？').then(function() {
+  ElMessageBox.confirm('确认要"' + text + '""' + row.username + '"用户吗？').then(function() {
     return changeUserStatus(row.userId, row.status);
   }).then(() => {
     ElMessage.success(text + "成功");
