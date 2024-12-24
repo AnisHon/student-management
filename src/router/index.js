@@ -33,7 +33,17 @@ export const constRouters = [
             role: STUDENT,
             icon: "Checked"
           },
-          children: [],
+          children: [
+            {
+              path: 'score',
+              name: 'Score',
+              component: () => import('@/views/student/score'),
+              meta: {
+                title: "成绩查询",
+                icon: "Money"
+              }
+            }
+          ],
         },
         {
           path: 'teacher',
