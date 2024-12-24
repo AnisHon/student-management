@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+
       <el-form-item label="专业" prop="majorId">
         <el-select
             v-model="queryParams.majorId"
@@ -9,13 +10,24 @@
             style="width: 240px"
         >
           <el-option
-              v-for="dict of classList"
+              v-for="dict of userList"
               :key="dict.majorId"
-              :label="dict.major.majorName"
+              :label="dict.majorName"
               :value="dict.majorId"
           />
         </el-select>
       </el-form-item>
+
+      <el-form-item label="学院" prop="institution">
+        <el-input
+            v-model="queryParams.institution"
+            placeholder="请输入学院"
+            clearable
+            style="width: 240px"
+            @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+
       <el-form-item>
         <el-button type="primary" icon="search" @click="handleQuery">搜索</el-button>
         <el-button icon="refresh"  @click="resetQuery">重置</el-button>
@@ -56,15 +68,10 @@
     </el-row>
     <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="50" align="center" />
-      <el-table-column label="专业ID" align="center" key="workNumber" prop="majorId" v-if="columns[0].visible" />
-      <el-table-column label="专业名称" align="center" key="userName" prop="majorName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
-      <el-table-column label="学院名称" align="center" key="majorName" prop="institution" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-<!--      <el-table-column label="班级" align="center" key="className" prop="className" v-if="columns[3].visible" :show-overflow-tooltip="true" />-->
-      <!--      <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">-->
-      <!--        <template v-slot="scope">-->
-      <!--          <span>{{ scope.row.createTime }}</span>-->
-      <!--        </template>-->
-      <!--      </el-table-column>-->
+      <el-table-column label="专业ID" align="center" key="majorId" prop="majorId" v-if="columns[0].visible" />
+      <el-table-column label="专业名称" align="center" key="majorName" prop="majorName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
+      <el-table-column label="学院名称" align="center" key="institution" prop="institution" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+
       <el-table-column
           label="操作"
           align="center"
@@ -73,7 +80,7 @@
 
       >
         <template v-slot="scope">
-          <div  v-if="scope.row.userId !== 1" style="display: flex">
+          <div  v-if="scope.row.majorId !== 1" style="display: flex">
             <el-link
                 type="primary"
                 icon="edit"
@@ -108,7 +115,7 @@
         :total="total"
         :page.sync="queryParams.pageNum"
         :limit.sync="queryParams.pageSize"
-        @pagination="getMajor"
+        @pagination="getList"
 
     />
 
@@ -122,18 +129,12 @@
               <el-input v-model="form.majorId" placeholder="请输入专业ID" maxlength="30" />
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="12">
             <el-form-item label="专业名称" prop="majorName">
               <el-input v-model="form.majorName" placeholder="请输入专业名称" maxlength="11" />
             </el-form-item>
           </el-col>
-<!--          <el-col :span="12">-->
-<!--            <el-form-item label="邮箱" prop="email">-->
-<!--              <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="50" />-->
-<!--            </el-form-item>-->
-<!--          </el-col>-->
+
         </el-row>
         <el-row>
           <el-col :span="12">
@@ -141,29 +142,9 @@
               <el-input v-model="form.institution" placeholder="请输入学院名称" maxlength="30" />
             </el-form-item>
           </el-col>
+
         </el-row>
-<!--        <el-row>-->
-<!--          <el-col :span="12">-->
-<!--            <el-form-item label="状态">-->
-<!--              <el-radio-group v-model="form.status">-->
-<!--                <el-radio-->
-<!--                    v-for="dict in []"-->
-<!--                    :key="dict.value"-->
-<!--                    :label="dict.value"-->
-<!--                >{{dict.label}}</el-radio>-->
-<!--              </el-radio-group>-->
-<!--            </el-form-item>-->
-<!--          </el-col>-->
-<!--        </el-row>-->
-        <el-row>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="备注">
-              <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -187,7 +168,9 @@ import {
   updateMajor,
   listStudent,
   listMajor,
-  listClass
+  listMajorAll,
+  listClass,
+  getMajor
 } from "@/api/user/index.js";
 // import {resetForm} from "@/utils/form.js";
 import RightToolbar from "@/components/RightToolbar/index.vue";
@@ -228,6 +211,9 @@ const form = ref({
 const queryParams = reactive( {
   pageNum: 1,
   pageSize: 10,
+  majorId: undefined,
+  classId: undefined,
+  institution: undefined,
 
 });
 // 列信息
@@ -241,6 +227,7 @@ const columns = reactive([
 const getList = () => {
   loading.value = true;
   listMajor(queryParams).then(response => {
+    console.log("专业", response)
         userList.value = response.rows;
         total.value = response.total;
         loading.value = false;
@@ -250,11 +237,10 @@ const getList = () => {
 
 const getClass = () => {
   loading.value = true;
-  // reset();
-  listClass().then(response => {
-    console.log("班级信息")
-    console.log(response)
-    classList.value = response;
+  listClass(queryParams).then(response => {
+    console.log("班级信息", response)
+    classList.value = response.rows;
+    total.value = Number(response.total);
     loading.value = false;
   })
 }
@@ -270,18 +256,18 @@ const cancel = () => {
 // 表单重置
 const reset = () => {
   form.value = {
-    userId: undefined,
-    deptId: undefined,
-    userName: undefined,
-    nickName: undefined,
-    password: undefined,
-    phonenumber: undefined,
-    email: undefined,
-    sex: undefined,
-    status: "0",
-    remark: undefined,
-    postIds: [],
-    roleIds: []
+    majorId: undefined,
+    // deptId: undefined,
+    majorName: undefined,
+    // nickName: undefined,
+    // password: undefined,
+    // phonenumber: undefined,
+    // email: undefined,
+    // sex: undefined,
+    // status: "0",
+    // remark: undefined,
+    // postIds: [],
+    // roleIds: []
   };
   // resetForm("form");
 };
@@ -299,7 +285,7 @@ const resetQuery = () => {
 };
 // 多选框选中数据
 const handleSelectionChange = (selection) => {
-  ids.value = selection.map(item => item.userId);
+  ids.value = selection.map(item => item.majorId);
   single.value = selection.length !== 1;
   multiple.value = !selection.length;
 };
@@ -325,8 +311,8 @@ const handleAdd = () => {
 /** 修改按钮操作 */
 const handleUpdate = (row) => {
   reset();
-  const userId = row.userId || ids;
-  getUser(userId).then(response => {
+  const majorId = row.majorId || ids;
+  getMajor(majorId).then(response => {
     form.value = response.data;
     open.value = true;
     title.value = "修改专业";
