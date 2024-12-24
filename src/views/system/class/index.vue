@@ -333,13 +333,13 @@ const handleResetPwd = (row) => {
 /** 提交按钮 */
 const submitForm = () => {
   if (form.classId !== undefined) {
-    updateClass(form).then(response => {
+    updateClass(form.value).then(response => {
       ElMessage.success("修改成功");
       open.value = false;
       getList();
     });
   } else {
-    addClass(form).then(response => {
+    addClass(form.value).then(response => {
       ElMessage.success("新增成功")
       open.value = false;
       getList();
