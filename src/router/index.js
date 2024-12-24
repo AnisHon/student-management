@@ -80,6 +80,13 @@ export const constRouters = [
               meta:{
                 title: "专业管理"
               }
+            },
+            {
+              path:"teacher",
+              component:() => import('@/views/system/teacher'),
+              meta:{
+                title: "教师管理"
+              }
             }
           ]
         },

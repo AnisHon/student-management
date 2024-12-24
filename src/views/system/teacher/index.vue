@@ -17,20 +17,15 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="班级" prop="classId">
-        <el-select
-            v-model="queryParams.classId"
-            placeholder="选择班级"
+
+      <el-form-item label="职称" prop="title">
+        <el-input
+            v-model="queryParams.title"
+            placeholder="请输入职称"
             clearable
             style="width: 240px"
-        >
-          <el-option
-              v-for="dict of classList"
-              :key="dict.classId"
-              :label="dict.className"
-              :value="dict.classId"
-          />
-        </el-select>
+            @keyup.enter.native="handleQuery"
+        />
       </el-form-item>
 
       <el-form-item>
@@ -72,11 +67,14 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" :columns="columns" style="margin-left: auto"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="classList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="teacherList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="50" align="center" />
-      <el-table-column label="专业名称" align="center" key="major.majorName" prop="major.majorName" v-if="columns[0].visible" />
-      <el-table-column label="班级" align="center" key="className" prop="className" v-if="columns[1].visible" :show-overflow-tooltip="true" />
-      <el-table-column label="学院名称" align="center" key="major.institution" prop="major.institution" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+      <el-table-column label="用户id" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
+      <el-table-column label="工号" align="center" key="workNumber" prop="workNumber" v-if="columns[1].visible" :show-overflow-tooltip="true" />
+      <el-table-column label="姓名" align="center" key="username" prop="username" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+      <el-table-column label="性别" align="center" key="gender" prop="gender" v-if="columns[3].visible" :show-overflow-tooltip="true" />
+      <el-table-column label="生日" align="center" key="birthday" prop="birthday" v-if="columns[4].visible" :show-overflow-tooltip="true" />
+      <el-table-column label="职称" align="center" key="title" prop="title" v-if="columns[5].visible" :show-overflow-tooltip="true" />
 
       <el-table-column
           label="操作"
@@ -86,7 +84,7 @@
 
       >
         <template v-slot="scope">
-          <div  v-if="scope.row.classId !== 1" style="display: flex">
+          <div  v-if="scope.row.userId !== 1" style="display: flex">
             <el-link
                 type="primary"
                 icon="edit"
@@ -131,26 +129,49 @@
       <el-form  label-width="80px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="班级id" prop="classId">
-              <el-input v-model="form.classId" placeholder="请输入班级id" maxlength="30" />
+            <el-form-item label="工号" prop="workNumber">
+              <el-input v-model="form.workNumber" placeholder="请输入工号" maxlength="30" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="姓名" prop="username">
+              <el-input v-model="form.username" placeholder="请输入姓名" maxlength="30" />
             </el-form-item>
           </el-col>
         </el-row>
-
         <el-row>
           <el-col :span="12">
-            <el-form-item label="专业" prop="majorId">
+            <el-form-item label="职称" prop="title">
+              <el-input v-model="form.title" placeholder="请输入职称" maxlength="30" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="院系" prop="institution">
+              <el-input v-model="form.institution" placeholder="请输入学院" maxlength="30" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="生日" prop="birthday">
+              <el-input v-model="form.birthday" placeholder="请输入生日" maxlength="30" />
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="性别" >
               <el-select
-                  v-model="form.majorId"
-                  placeholder="选择专业"
+                  v-model="form.gender"
+                  placeholder="选择性别"
                   clearable
                   style="width: 240px"
               >
                 <el-option
-                    v-for="dict of classList"
-                    :key="dict.majorId"
-                    :label="dict.major.majorName"
-                    :value="dict.major.majorId"
+                    v-for="dict in [{label: 'Male', value: '0'},
+                    {label: 'Female', value: '1'}]"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
                 />
               </el-select>
             </el-form-item>
@@ -172,7 +193,14 @@
 import {reactive, ref} from "vue";
 import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
 import Pagination from "@/components/Pagination/index.vue";
-import {addClass, changeUserStatus, getUser, listClass, updateClass, listClassAll, listMajor, listMajorAll, delClass, getClass} from "@/api/user/index.js";
+import {
+    changeUserStatus,
+    delTeacher,
+    updateTeacher,
+    addTeacher,
+    getTeacher,
+    listTeacher
+} from "@/api/user/index.js";
 // import {resetForm} from "@/utils/form.js";
 import RightToolbar from "@/components/RightToolbar/index.vue";
 
@@ -191,14 +219,14 @@ const total = ref(0);
 const majorListAll = ref([]);
 // 班级表格数据
 const classList = ref([]);
+// 教师表格数据
+const teacherList = ref([])
 // 弹出层标题
 const title =  ref("");
 
 // 是否显示弹出层
 const open = ref(false);
 
-// 默认密码
-const initPassword = ref("");
 
 // 表单参数
 const form = ref({});
@@ -207,25 +235,26 @@ const queryParams = reactive( {
   pageNum: 1,
   pageSize: 10,
   majorId:undefined,
-  classId:undefined,
+  title: undefined,
+  userId: undefined,
 });
 // 列信息
 const columns = reactive([
-  { key: 0, label: `专业名称`, visible: true },
-  { key: 1, label: `班级名`, visible: true },
-  { key: 2, label: `学院`, visible: true },
-  // { key: 3, label: `部门`, visible: true },
-  // { key: 4, label: `手机号码`, visible: true },
-  // { key: 5, label: `状态`, visible: true },
-  // { key: 6, label: `创建时间`, visible: true }
+  { key: 0, label: `用户id`, visible: true },
+  { key: 1, label: `工号`, visible: true },
+  { key: 2, label: `姓名`, visible: true },
+  { key: 3, label: `性别`, visible: true },
+  { key: 4, label: `生日`, visible: true },
+  { key: 5, label: `职称`, visible: true },
+  // { key: 6, label: `时间`, visible: true }
 ])
 
 
 const getList = () => {
   loading.value = true;
-  listClass(queryParams).then(response => {
-    console.log("测试", response)
-        classList.value = response.rows;
+  listTeacher(queryParams).then(response => {
+        console.log("测试", response)
+        teacherList.value = response.rows;
         total.value = Number(response.total);
         loading.value = false;
       }
@@ -241,8 +270,8 @@ const getList = () => {
 // 用户状态修改
 const handleStatusChange = (row) => {
   let text = row.status === "0" ? "启用" : "停用";
-  ElMessageBox.confirm('确认要"' + text + '""' + row.className + '"用户吗？').then(function() {
-    return changeUserStatus(row.classId, row.status);
+  ElMessageBox.confirm('确认要"' + text + '""' + row.userName + '"用户吗？').then(function() {
+    return changeUserStatus(row.userId, row.status);
   }).then(() => {
     ElMessage.success(text + "成功");
   }).catch(function() {
@@ -259,18 +288,22 @@ const cancel = () => {
 // 表单重置
 const reset = () => {
   form.value = {
-    classId: undefined,
-    deptId: undefined,
-    className: undefined,
-    nickName: undefined,
-    password: undefined,
-    phonenumber: undefined,
-    email: undefined,
-    sex: undefined,
-    status: "0",
-    remark: undefined,
-    postIds: [],
-    roleIds: []
+    userId: undefined,
+    // deptId: undefined,
+    username: undefined,
+    gender: undefined,
+    birthday: undefined,
+    title: undefined,
+    workNumber: undefined
+    // nickName: undefined,
+    // password: undefined,
+    // phonenumber: undefined,
+    // email: undefined,
+    // sex: undefined,
+    // status: "0",
+    // remark: undefined,
+    // postIds: [],
+    // roleIds: []
   };
   // resetForm("form");
 };
@@ -280,18 +313,21 @@ const handleQuery = () => {
   queryParams.pageNum = 1;
   getList();
 };
+
 /** 重置按钮操作 */
 const resetQuery = () => {
   // resetForm("queryForm");
-  queryParams.deptId = undefined;
+  queryParams.userId = undefined;
   handleQuery();
 };
+
 // 多选框选中数据
 const handleSelectionChange = (selection) => {
-  ids.value = selection.map(item => item.classId);
+  ids.value = selection.map(item => item.userId);
   single.value = selection.length !== 1;
   multiple.value = !selection.length;
 };
+
 // 更多操作触发
 const handleCommand = (command, row) => {
   switch (command) {
@@ -317,14 +353,15 @@ const handleAdd = () => {
 const handleUpdate = (row) => {
   reset();
 
-  const classId = row.classId || ids.value;
-  console.log(classId)
-  getClass(classId).then(response => {
+  const userId = row.userId || ids.value;
+  console.log(userId)
+  getTeacher(userId).then(response => {
     form.value = response;
     open.value = true;
     title.value = "修改用班级信息";
   });
 };
+
 /** 重置密码按钮操作 */
 const handleResetPwd = (row) => {
   ElNotification.info("你猜我实现了吗")
@@ -332,14 +369,15 @@ const handleResetPwd = (row) => {
 
 /** 提交按钮 */
 const submitForm = () => {
-  if (form.classId !== undefined) {
-    updateClass(form.value).then(response => {
+  console.log("我是丁震",form)
+  if (form.userId !== undefined) {
+    updateTeacher(form.value).then(response => {
       ElMessage.success("修改成功");
       open.value = false;
       getList();
     });
   } else {
-    addClass(form.value).then(response => {
+    addTeacher(form.value).then(response => {
       ElMessage.success("新增成功")
       open.value = false;
       getList();
@@ -349,9 +387,9 @@ const submitForm = () => {
 
 /** 删除按钮操作 */
 const handleDelete = (row) => {
-  const classIds = row.classId || ids.value;
-  ElMessageBox.confirm('是否确认删除用户编号为"' + classIds + '"的数据项？').then(function() {
-    return delClass(classIds);
+  const userIds = row.userId || ids.value;
+  ElMessageBox.confirm('是否确认删除用户为"' + row.username + '"的数据项？').then(function() {
+    return delTeacher(userIds);
   }).then(() => {
     getList();
     ElMessage.success("删除成功");

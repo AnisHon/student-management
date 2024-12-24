@@ -1,5 +1,6 @@
 import service from "@/utils/http.js";
 import axios from "axios";
+import {shallowReactive} from "vue";
 // import {userData} from "@/mookjs/test.js";
 
 // userData.setup()
@@ -53,6 +54,14 @@ const listMajorAll = () => {
     })
 }
 
+const listTeacher = (query) => {
+    return service({
+        url: '/system/teacher/list',
+        method: 'get',
+        params:query
+    })
+}
+
 const getUser = (userId) => {
     return service({
         url: '/system/user/' +userId,
@@ -81,6 +90,13 @@ const getClass = (classId) => {
     })
 }
 
+const getTeacher = (userId) => {
+    return service({
+        url: '/system/teacher/' + userId,
+        method: 'get'
+    })
+}
+
 const delUser = (userId) => {
     return service({
         url: '/system/user/' + userId,
@@ -105,6 +121,13 @@ const delClass = (classId) => {
 const delMajor = (majorId) => {
     return service({
         url:'/system/major/' +majorId,
+        method: 'delete'
+    })
+}
+
+const delTeacher = () =>{
+    return service({
+        url: '/system/teacher/' + userId,
         method: 'delete'
     })
 }
@@ -142,6 +165,14 @@ const addClass = (data) => {
     })
 }
 
+const addTeacher = (data) => {
+    return service({
+        url: '/system/teacher',
+        method: 'post',
+        data: data,
+    })
+}
+
 const updateUser = (data) => {
     return service({
         url: '/system/user',
@@ -169,6 +200,14 @@ const updateStudent = (data) => {
 const updateMajor = (data) => {
     return service({
         url: 'system/major',
+        method: 'put',
+        data: data
+    })
+}
+
+const updateTeacher = (data) => {
+    return service({
+        url: '/system/teacher',
         method: 'put',
         data: data
     })
@@ -215,5 +254,11 @@ export {
     updateMajor,
     getMajor,
     delMajor,
+
+    listTeacher,
+    getTeacher,
+    updateTeacher,
+    delTeacher,
+    addTeacher,
 
 }
