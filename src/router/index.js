@@ -117,6 +117,25 @@ export const constRouters = [
               meta: {
                 title: "辅导员管理"
               }
+            },
+            {
+              path: "article",
+              name: "Article",
+              component:  () => import("@/views/system/article"),
+              meta: {
+                title: "文章管理",
+                leaf: true
+              },
+              children: [
+                {
+                  path: 'edit-article',
+                  name: 'ArticleEdit',
+                  component: () => import("@/views/system/article/EditArticle.vue"),
+                  meta: {
+                    title: "编辑文章",
+                  }
+                }
+              ]
             }
           ]
         },
