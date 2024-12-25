@@ -180,25 +180,44 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="生日" prop="birthday">
-              <el-input v-model="form.birthday" placeholder="请输入生日" maxlength="30" />
+              <el-date-picker
+                  v-model="form.birthday"
+                  type="date"
+                  placeholder="请选择生日"
+              />
             </el-form-item>
           </el-col>
+
           <el-col :span="12">
-            <el-form-item label="性别" >
-              <el-select
-                  v-model="form.gender"
-                  placeholder="选择性别"
-                  clearable
-                  style="width: 240px"
-              >
-                <el-option
-                    v-for="dict in [{label: 'Male', value: '0'},
-                    {label: 'Female', value: '1'}]"
+            <el-form-item label="密码" prop="password">
+              <el-input v-model="form.password" placeholder="请输入密码" type="password" maxlength="30" />
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="性别">
+              <el-radio-group v-model="form.gender">
+                <el-radio
+                    v-for="dict in [{value: 0, label: 'Male'},
+                    {value: 1, label: 'Female'}]"
                     :key="dict.value"
                     :label="dict.label"
                     :value="dict.value"
-                />
-              </el-select>
+                >{{dict.label}}</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="状态">
+              <el-radio-group v-model="form.status">
+                <el-radio
+                    v-for="dict in [{value: 0, label: 'Normal'},
+                    {value: 1, label: 'Banned'}]"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                >{{dict.label}}</el-radio>
+              </el-radio-group>
             </el-form-item>
           </el-col>
         </el-row>
@@ -397,14 +416,18 @@ const handleResetPwd = (row) => {
 /** 提交按钮 */
 const submitForm = () => {
   console.log("我是提交",form)
+
+  const {birthday, gender, majorId, password, status, userId, username, workNumber} = form.value
+  const submit = {birthday, gender, majorId, password, status, userId, username, workNumber}
+
   if (form.value.userId !== undefined) {
-    updateInstructor(form.value).then(response => {
+    updateInstructor(submit).then(response => {
       ElMessage.success("修改成功");
       open.value = false;
       getList();
     });
   } else {
-    addInstructor(form.value).then(response => {
+    addInstructor(submit).then(response => {
       ElMessage.success("新增成功")
       open.value = false;
       getList();

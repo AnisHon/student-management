@@ -78,13 +78,6 @@ const listCourse = (query) => {
     })
 }
 
-const listMark = () => {
-    return service({
-        url: '/system/mark/list',
-        method: 'get',
-    })
-}
-
 const getUser = (userId) => {
     return service({
         url: '/system/user/' +userId,
@@ -162,14 +155,14 @@ const delMajor = (majorId) => {
     })
 }
 
-const delTeacher = () =>{
+const delTeacher = (userId) =>{
     return service({
         url: '/system/teacher/' + userId,
         method: 'delete'
     })
 }
 
-const delInstructor = () =>{
+const delInstructor = (userId) =>{
     return service({
         url: '/system/instructor/' + userId,
         method: 'delete'
@@ -179,13 +172,6 @@ const delInstructor = () =>{
 const delCourse = (courseId) => {
     return service({
         url: '/system/course/' + courseId,
-        method: 'delete'
-    })
-}
-
-const delMark = (userId) => {
-    return service({
-        url: '/system/mark/' + userId,
         method: 'delete'
     })
 }
@@ -247,14 +233,6 @@ const addCourse = (data) => {
     })
 }
 
-const addMark = (data) => {
-    return service({
-        url: '/system/mark' ,
-        method: 'post',
-        data: data,
-    })
-}
-
 const updateUser = (data) => {
     return service({
         url: '/system/user/',
@@ -311,14 +289,6 @@ const updateCourse = (data) => {
     })
 }
 
-const updateMark = (data) => {
-    return service({
-        url: '/system/mark',
-        method: 'put',
-        data: data
-    })
-}
-
 const changeUserStatus = (userId, status) => {
     const data = {
         userId,
@@ -331,7 +301,35 @@ const changeUserStatus = (userId, status) => {
     })
 }
 
+export const listMark = () => {
+    return service({
+        url: '/instructor/mark',
+        method: 'get',
+    })
+}
 
+export const updateMark = (data) => {
+    return service({
+        url: '/instructor/mark',
+        method: 'put',
+        data: data
+    })
+}
+
+export const addMark = (data) => {
+    return service({
+        url: '/instructor/mark' ,
+        method: 'post',
+        data: data,
+    })
+}
+
+export const delMark = (userId) => {
+    return service({
+        url: '/instructor/mark/' + userId,
+        method: 'delete'
+    })
+}
 
 export {
     listUser,
@@ -379,8 +377,4 @@ export {
     addCourse,
     delCourse,
 
-    listMark,
-    updateMark,
-    addMark,
-    delMark,
 }
