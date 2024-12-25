@@ -53,6 +53,7 @@ service.interceptors.response.use(res => {
         const msg = errorCode[code] || res.data.message || errorCode['default']
         // 二进制数据则直接返回
         if (res.request.responseType ===  'blob' || res.request.responseType ===  'arraybuffer') {
+            console.log(123)
             return res.data
         }
 

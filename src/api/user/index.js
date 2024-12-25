@@ -347,8 +347,14 @@ export const listScore = (query) => {
     })
 }
 
+export const downloadScore = (query) => {
+    const queryParams = new URLSearchParams(query).toString().replaceAll("undefined", "");
+    const url = "/api/teacher/score/export?"+queryParams;
+    window.open(url);
+}
+
 export const exportScore = (query) => {
-    return service({
+    service({
         url: '/teacher/score/export',
         method: 'get',
         params: query,
@@ -364,11 +370,8 @@ export const statisticScore = (query) => {
 }
 
 export const exportStatistic = (query) => {
-    return service({
-        url: '/teacher/score/statistic/export',
-        method: 'get' ,
-        params: query
-    })
+    const url = "/api/teacher/score/statistic/export?" + new URLSearchParams(query).toString().replaceAll("undefined", "");
+    window.open(url);
 }
 
 export const addScore = (data) => {

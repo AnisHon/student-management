@@ -207,7 +207,24 @@
       </div>
     </el-dialog>
 
-
+    <el-dialog v-model="openUpload">
+      <el-upload
+          class="upload-demo"
+          drag
+          action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+          multiple
+      >
+        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+        <div class="el-upload__text">
+          Drop file here or <em>click to upload</em>
+        </div>
+        <template #tip>
+          <div class="el-upload__tip">
+            jpg/png files with a size less than 500kb
+          </div>
+        </template>
+      </el-upload>
+    </el-dialog>
   </div>
 </template>
 
@@ -216,7 +233,7 @@
 import {reactive, ref} from "vue";
 import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
 import Pagination from "@/components/Pagination/index.vue";
-import {addScore, delScore, listScore, updateScore,} from "@/api/user/index.js";
+import {addScore, delScore, downloadScore, listScore, updateScore,} from "@/api/user/index.js";
 import RightToolbar from "@/components/RightToolbar/index.vue";
 import {mark} from "@/api/course/mark.js";
 
@@ -231,6 +248,8 @@ const multiple = ref(true);
 const showSearch = ref(true);
 // 总条数
 const total = ref(0);
+
+const openUpload = ref(false);
 
 // 成绩数据
 const userList = ref([]);
@@ -433,11 +452,11 @@ const handleMark = async (row) => {
 }
 
 const handleImport = () => {
-
+  openUpload.value = true;
 }
 
 const handleExport = () => {
-
+  downloadScore(queryParams)
 }
 
 // created

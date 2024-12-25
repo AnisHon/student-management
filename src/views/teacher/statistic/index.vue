@@ -25,6 +25,7 @@
       <el-form-item>
         <el-button type="primary" icon="search" @click="handleQuery">搜索</el-button>
         <el-button icon="refresh"  @click="resetQuery">重置</el-button>
+        <el-button icon="download" type="warning"  @click="handleDownload">导出</el-button>
       </el-form-item>
     </el-form>
 
@@ -147,7 +148,7 @@ import {
   addTeacher,
   getTeacher,
   listTeacher,
-  listMajorAll, statisticScore,
+  listMajorAll, statisticScore, exportStatistic,
 } from "@/api/user/index.js";
 // import {resetForm} from "@/utils/form.js";
 import RightToolbar from "@/components/RightToolbar/index.vue";
@@ -339,7 +340,9 @@ const handleDelete = (row) => {
   }).catch(() => {});
 }
 
-
+const handleDownload = () => {
+  exportStatistic(queryParams)
+}
 
 
 
