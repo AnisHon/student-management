@@ -100,6 +100,14 @@ export const constRouters = [
                 title: "分数管理",
                 icon: "TrendCharts",
               }
+            },
+            {
+              path: "statistic",
+              component: () => import('@/views/teacher/statistic'),
+              meta: {
+                title: "分数统计",
+                icon: "DataLine"
+              }
             }
           ],
         },
