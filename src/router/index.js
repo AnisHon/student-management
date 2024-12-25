@@ -22,8 +22,20 @@ export const constRouters = [
           meta: {
             title: "首页",
             role: PUBLIC,
+            leaf: true,
             icon: 'HomeFilled'
-          }
+          },
+          children: [
+            {
+              path: "article-preview",
+              name: "ArticlePreview",
+              component: () => import("@/components/RecentNotification/Notification.vue"),
+              meta: {
+                name: "文章预览",
+                hidden: true
+              }
+            }
+          ]
         },
         {
           path: 'student',
@@ -125,11 +137,23 @@ export const constRouters = [
             },
             {
               path: "course",
+              name: "Course",
               component: () => import('@/views/system/course'),
               meta:{
                 title: "课程管理",
-                icon: "Reading"
-              }
+                icon: "Reading",
+                leaf: true,
+              },
+              children: [
+                {
+                  path: "resign/:id",
+                  name: "Resign",
+                  component: () => import('@/views/system/course/Resign.vue'),
+                  meta: {
+                    title: "分配课程",
+                  }
+                }
+              ]
             },
             {
               path: "article",
@@ -160,15 +184,7 @@ export const constRouters = [
             }
           ]
         },
-        {
-          path: "/article-preview",
-          name: "ArticlePreview",
-          component: () => import("@/components/RecentNotification/Notification.vue"),
-          meta: {
-            name: "文章预览",
-            hidden: true
-          }
-        }
+
       ]
     },
   {

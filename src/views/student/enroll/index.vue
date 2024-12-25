@@ -37,7 +37,7 @@
             type="primary"
             plain
             icon="plus"
-            :disabled="(single && multiple)"
+            :disabled="!enable"
             @click="handleEnroll"
         >选课</el-button>
       </el-col>
@@ -100,8 +100,7 @@ import {useRouter} from "vue-router";
 const router = useRouter();
 const open = ref(false);
 const ids = ref([])
-const single = ref(false)
-const multiple = ref(false)
+const enable = ref(false)
 const list = ref([])
 const loading = ref(false)
 const queryParams = reactive({
@@ -144,8 +143,7 @@ const getList = async () => {
 
 const handleSelectionChange = (selection) => {
   ids.value = selection.map(item => item.teachId);
-  single.value = selection.length !== 1;
-  multiple.value = !selection.length;
+  enable.value = !!selection.length;
 };
 
 const handleEnroll = () => {

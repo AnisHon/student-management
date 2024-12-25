@@ -1,5 +1,5 @@
 <template>
-  <MdEditor v-model="text" :theme="theme"/>
+  <MdEditor v-model="text" :theme="theme" preview-theme="github"/>
 </template>
 
 <script setup>
