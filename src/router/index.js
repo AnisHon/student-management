@@ -100,6 +100,14 @@ export const constRouters = [
                 title: "分数管理",
                 icon: "TrendCharts",
               }
+            },
+            {
+              path: "statistic",
+              component: () => import('@/views/teacher/statistic'),
+              meta: {
+                title: "分数统计",
+                icon: "DataLine"
+              }
             }
           ],
         },
@@ -181,6 +189,13 @@ export const constRouters = [
               ]
             },
             {
+              path: "courseAssign",
+              component:()=>import('@/views/system/assign'),
+              meta: {
+                title: "授课管理",
+              }
+            },
+            {
               path: "article",
               name: "Article",
               component:  () => import("@/views/system/article"),
@@ -201,14 +216,7 @@ export const constRouters = [
                 }
               ]
             },
-            // {
-            //   path: "mark",
-            //   component: () => import('@/views/teacher/mark'),
-            //   meta:{
-            //     title: "标记学生",
-            //     icon: "Aim",
-            //   }
-            // }
+
           ]
         },
 
