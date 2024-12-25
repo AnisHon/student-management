@@ -2,7 +2,7 @@
   <div>
     <h1 style="text-align: center">{{ form.title }}</h1>
     <MdPreviewer
-        v-model="form.content"
+        :text="form.content"
     />
   </div>
 </template>
@@ -58,8 +58,5 @@ if (form.articleId) {
 </script>
 
 <style>
-iframe {
-  width: 100%;
-  min-height: 400px;
-}
+
 </style>

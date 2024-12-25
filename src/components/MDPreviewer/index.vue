@@ -1,6 +1,5 @@
 <template>
-  <MdPreview :id="id" :modelValue="text" :theme="theme" />
-  <MdCatalog :editorId="id" />
+  <MdPreview :id="id"  :modelValue="text" :theme="theme" style="background-color: #121212" preview-theme="github"/>
 </template>
 
 <script setup>
@@ -23,3 +22,10 @@ const theme = computed(() => {
 
 
 </script>
+
+<style>
+iframe {
+  width: 100%;
+  min-height: 400px;
+}
+</style>
