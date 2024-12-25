@@ -132,6 +132,25 @@ export const constRouters = [
               }
             },
             {
+              path: "article",
+              name: "Article",
+              component:  () => import("@/views/system/article"),
+              meta: {
+                title: "文章管理",
+                leaf: true
+              },
+              children: [
+                {
+                  path: 'edit-article',
+                  name: 'ArticleEdit',
+                  component: () => import("@/views/system/article/EditArticle.vue"),
+                  meta: {
+                    title: "编辑文章",
+                  }
+                }
+              ]
+            },
+            {
               path: "mark",
               component: () => import('@/views/system/mark'),
               meta:{

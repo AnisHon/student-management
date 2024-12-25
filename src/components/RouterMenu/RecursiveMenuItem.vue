@@ -1,7 +1,7 @@
 <template>
 
 
-  <el-sub-menu v-if="constRoute.children !== undefined" :index="constRoute.path">
+  <el-sub-menu v-if="constRoute.children !== undefined && !constRoute.meta.leaf" :index="constRoute.path">
     <template #title>
       <el-icon><Component :is="constRoute.meta.icon"/></el-icon>
       <span>{{ constRoute.meta.title }}</span>
