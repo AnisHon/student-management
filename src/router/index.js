@@ -87,7 +87,8 @@ export const constRouters = [
               component:() => import('@/views/system/student/index.vue'),
               meta:{
                 title: "学生管理",
-                icon: "User"
+                // icon: "User",
+                icon: "SwitchFilled"
               }
             },
             {
@@ -128,6 +129,14 @@ export const constRouters = [
               meta:{
                 title: "课程管理",
                 icon: "Reading"
+              }
+            },
+            {
+              path: "mark",
+              component: () => import('@/views/system/mark'),
+              meta:{
+                title: "标记学生",
+                icon: "Aim",
               }
             }
           ]

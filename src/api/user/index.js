@@ -78,6 +78,13 @@ const listCourse = (query) => {
     })
 }
 
+const listMark = () => {
+    return service({
+        url: '/system/mark/list',
+        method: 'get',
+    })
+}
+
 const getUser = (userId) => {
     return service({
         url: '/system/user/' +userId,
@@ -176,6 +183,13 @@ const delCourse = (courseId) => {
     })
 }
 
+const delMark = (userId) => {
+    return service({
+        url: '/system/mark/' + userId,
+        method: 'delete'
+    })
+}
+
 const addUser = (data) => {
     return service({
         url: '/system/user',
@@ -233,6 +247,14 @@ const addCourse = (data) => {
     })
 }
 
+const addMark = (data) => {
+    return service({
+        url: '/system/mark' ,
+        method: 'post',
+        data: data,
+    })
+}
+
 const updateUser = (data) => {
     return service({
         url: '/system/user/',
@@ -284,6 +306,14 @@ const updateInstructor = (data) => {
 const updateCourse = (data) => {
     return service({
         url: '/system/course',
+        method: 'put',
+        data: data
+    })
+}
+
+const updateMark = (data) => {
+    return service({
+        url: '/system/mark',
         method: 'put',
         data: data
     })
@@ -348,4 +378,9 @@ export {
     updateCourse,
     addCourse,
     delCourse,
+
+    listMark,
+    updateMark,
+    addMark,
+    delMark,
 }
