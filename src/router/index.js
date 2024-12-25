@@ -100,7 +100,7 @@ export const constRouters = [
               component:()=>import('@/views/system/assign'),
               meta: {
                 title: "我的授课",
-                icon: "BookFilled"
+                icon: "Notebook"
               }
             },
             {
@@ -215,6 +215,7 @@ export const constRouters = [
                   component: () => import("@/views/system/article/EditArticle.vue"),
                   meta: {
                     title: "编辑文章",
+                    icon: "Document"
 
                   }
                 }
