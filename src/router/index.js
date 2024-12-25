@@ -189,6 +189,13 @@ export const constRouters = [
               ]
             },
             {
+              path: "courseAssign",
+              component:()=>import('@/views/system/assign'),
+              meta: {
+                title: "授课管理",
+              }
+            },
+            {
               path: "article",
               name: "Article",
               component:  () => import("@/views/system/article"),
@@ -209,14 +216,7 @@ export const constRouters = [
                 }
               ]
             },
-            // {
-            //   path: "mark",
-            //   component: () => import('@/views/teacher/mark'),
-            //   meta:{
-            //     title: "标记学生",
-            //     icon: "Aim",
-            //   }
-            // }
+
           ]
         },
 
