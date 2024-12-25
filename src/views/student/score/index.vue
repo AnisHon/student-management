@@ -1,31 +1,31 @@
 <template>
   <div class="app-container">
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-            type="primary"
-            plain
-            icon="plus"
-            :disabled="(single && multiple)"
-            @click="handleDrop"
-        >
-          退选
-        </el-button>
-      </el-col>
-    </el-row>
-    <el-table v-loading="loading" :data="scoreList" @selection-change="handleSelectionChange" empty-text="你还没有任何成绩">
-      <el-table-column type="selection" width="50" align="center" />
-      <el-table-column label="课程名称" align="center" key="courseName" prop="courseName" />
-      <el-table-column label="学年" align="center" key="schoolYear" prop="schoolYear" :show-overflow-tooltip="true" />
-      <el-table-column label="成绩" align="center" key="score" prop="score" :show-overflow-tooltip="true" />
-      <el-table-column label="学分" align="center" key="credit" prop="credit">
-        <template v-slot="scope">
-          {{ calculate(Number(scope.row.credit), Number(scope.row.score)) }}
-        </template>
+    <div v-loading="loading" v-for="key in Object.keys(scoreList)">
+      <h1 class="title">
+        {{ `${key}-${Number(key) + 1}学年度` }}
+      </h1>
+      <el-divider/>
+      <el-table  :data="scoreList[key]" @selection-change="handleSelectionChange" empty-text="你还没有任何成绩">
+        <el-table-column label="课程名称" align="center" key="courseName" prop="courseName" />
+        <el-table-column label="学年" align="center" key="schoolYear" prop="schoolYear" :show-overflow-tooltip="true" />
+        <el-table-column label="成绩" align="center" key="score" prop="score" :show-overflow-tooltip="true" >
+          <template v-slot="scope">
+            <el-tag :type="typeFromScore(scope.row.score)">
+              {{ getScore(scope) }}
+            </el-tag>
 
-      </el-table-column>
+          </template>
+        </el-table-column>
+        <el-table-column label="学分" align="center" key="credit" prop="credit">
+          <template v-slot="scope">
+            {{ calculate(scope.row) }}
+          </template>
 
-    </el-table>
+        </el-table-column>
+
+      </el-table>
+    </div>
+
   </div>
 </template>
 
@@ -34,7 +34,8 @@
 import {ref} from "vue";
 import {dropCourse, fetchMyScore} from "@/api/student/score.js";
 import {ElNotification} from "element-plus";
-
+import {calculate, getScore, typeFromScore} from "@/utils/score.js";
+import _ from "lodash";
 
 const loading =  ref(true);
 // 选中数组
@@ -56,21 +57,14 @@ const getList = async () => {
   loading.value = true;
   const scores = await fetchMyScore()
   if (scores) {
-    scoreList.value = scores
+    scoreList.value = _.groupBy(scores, (sc) => sc.schoolYear)
+    console.log(typeof scoreList.value)
   }
 
 
   loading.value = false;
 }
 
-const calculate = (credit, score) => {
-  if (score) {
-    return Math.round(score / 100 * credit)
-  } else {
-    return "无分数";
-  }
-
-}
 
 
 const handleDrop = () => {
@@ -100,3 +94,9 @@ const handleDrop = () => {
 // created
 getList();
 </script>
+
+<style scoped>
+.title {
+  font-weight: 400;
+}
+</style>

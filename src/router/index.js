@@ -64,6 +64,14 @@ export const constRouters = [
                 icon: "Money"
               }
             },
+            {
+              path: 'result',
+              name: 'Result',
+              component: () => import('@/views/student/enroll-result'),
+              meta: {
+                title: "选课结果",
+              }
+            }
 
 
           ],
