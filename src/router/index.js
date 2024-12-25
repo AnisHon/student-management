@@ -152,7 +152,7 @@ export const constRouters = [
             },
             {
               path: "mark",
-              component: () => import('@/views/system/mark'),
+              component: () => import('@/views/teacher/mark'),
               meta:{
                 title: "标记学生",
                 icon: "Aim",

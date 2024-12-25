@@ -8,7 +8,7 @@
 <!--        <el-button icon="refresh"  @click="resetQuery">重置</el-button>-->
 <!--      </el-form-item>-->
 <!--    </el-form>-->
-
+<!-- todo -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
@@ -129,7 +129,7 @@ import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
 import Pagination from "@/components/Pagination/index.vue";
 import {
   changeUserStatus,
-  getStudent, listCourse, updateCourse, addCourse, delCourse, getCourse, listMark,
+  getStudent, listCourse, updateCourse, addCourse, delCourse, getCourse, listMark, updateMark, addMark,
 
 } from "@/api/user/index.js";
 // import {resetForm} from "@/utils/form.js";
@@ -186,7 +186,6 @@ const getList = () => {
   loading.value = true;
   listMark().then(response => {
         userList.value = response;
-        // total.value = Number(response.total);
         loading.value = false;
       }
   );
@@ -213,11 +212,9 @@ const cancel = () => {
 // 表单重置
 const reset = () => {
   form.value = {
-    courseId: undefined,
-    courseName: undefined,
-    credit: undefined,
-    duration: undefined,
-    schoolYear: 2024,
+    studentId: undefined,
+    studentName: undefined,
+    tag: undefined,
   };
   // resetForm("form");
 };
@@ -227,18 +224,21 @@ const handleQuery = () => {
   queryParams.pageNum = 1;
   getList();
 };
+
 /** 重置按钮操作 */
 const resetQuery = () => {
   // resetForm("queryForm");
   queryParams.deptId = undefined;
   handleQuery();
 };
+
 // 多选框选中数据
 const handleSelectionChange = (selection) => {
-  ids.value = selection.map(item => item.courseId);
+  ids.value = selection.map(item => item.studentId);
   single.value = selection.length !== 1;
   multiple.value = !selection.length;
 };
+
 // 更多操作触发
 const handleCommand = (command, row) => {
   switch (command) {
@@ -252,18 +252,20 @@ const handleCommand = (command, row) => {
       break;
   }
 }
+
 /** 新增按钮操作 */
 const handleAdd = () => {
   reset();
   open.value = true;
-  title.value = "添加学生信息";
+  title.value = "添加学生标记信息";
 };
+
 /** 修改按钮操作 */
 const handleUpdate = (row) => {
   reset();
-  const courseId = row.courseId || ids.value;
+  const studentId = row.studentId || ids.value;
   console.log("修改按钮", form)
-  getCourse(courseId).then(response => {
+  listMark(studentId).then(response => {
     form.value = response;
     open.value = true;
     title.value = "修改课程信息";
@@ -278,18 +280,18 @@ const handleResetPwd = (row) => {
 /** 提交按钮 */
 const submitForm = () => {
 
-  const {courseId,courseName, credit, duration, schoolYear} = form.value
-  const submit = {courseId,courseName, credit, duration, schoolYear}
+  const {studentId, tag} = form.value
+  const submit = {studentId, tag}
 
   console.log("提交修改",submit)
   if (form.value.courseId !== undefined) {
-    updateCourse(submit).then(response => {
+    updateMark(submit).then(response => {
       ElMessage.success("修改成功");
       open.value = false;
       getList();
     });
   } else {
-    addCourse(submit).then(response => {
+    addMark(submit).then(response => {
       ElMessage.success("新增成功")
       open.value = false;
       getList();
