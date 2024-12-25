@@ -93,7 +93,7 @@
             >删除</el-link>
             <el-dropdown  @command="(command) => handleCommand(command, scope.row)">
 
-              <el-link  type="primary" icon="d-arrow-right">更多</el-link>
+              <el-link  type="primary" icon="d-arrow-right" style="display: none" >更多</el-link>
               <template #dropdown>
 
                 <el-dropdown-menu slot="dropdown">
@@ -124,9 +124,9 @@
     <el-dialog :title="title" v-model="open" width="600px" append-to-body>
       <el-form  label-width="80px">
         <el-row>
-          <el-col :span="12">
+          <el-col :span="12" >
             <el-form-item label="专业ID" prop="majorId">
-              <el-input v-model="form.majorId" placeholder="请输入专业ID" maxlength="30" />
+              <el-input v-model="form.majorId" placeholder="请输入专业ID" maxlength="30" disabled />
             </el-form-item>
           </el-col>
           <el-col :span="12">

@@ -54,8 +54,6 @@ export const constRouters = [
             },
 
 
-
-
           ],
         },
         {
@@ -80,42 +78,56 @@ export const constRouters = [
               path: 'user',
               component: () => import('@/views/system/user'),
               meta: {
-                title: "用户管理"
+                title: "用户管理",
+                icon:"UserFilled"
               }
             },
             {
               path: "student",
               component:() => import('@/views/system/student/index.vue'),
               meta:{
-                title: "学生管理"
+                title: "学生管理",
+                icon: "User"
               }
             },
             {
               path:'class',
               component:() => import('@/views/system/class'),
               meta:{
-                title: "班级管理"
+                title: "班级管理",
+                icon: "School"
               }
             },
             {
               path:"major",
               component:() => import('@/views/system/major'),
               meta:{
-                title: "专业管理"
+                title: "专业管理",
+                icon: "Compass"
               }
             },
             {
               path:"teacher",
               component:() => import('@/views/system/teacher'),
               meta:{
-                title: "教师管理"
+                title: "教师管理",
+                icon: "Avatar"
               }
             },
             {
               path: "instructor",
               component:() => import('@/views/system/instructor'),
               meta: {
-                title: "辅导员管理"
+                title: "辅导员管理",
+                icon: "Service"
+              }
+            },
+            {
+              path: "course",
+              component: () => import('@/views/system/course'),
+              meta:{
+                title: "课程管理",
+                icon: "Reading"
               }
             },
             {

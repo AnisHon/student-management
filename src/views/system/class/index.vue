@@ -99,7 +99,7 @@
             >删除</el-link>
             <el-dropdown  @command="(command) => handleCommand(command, scope.row)">
 
-              <el-link  type="primary" icon="d-arrow-right">更多</el-link>
+              <el-link  type="primary" icon="d-arrow-right" style="display: none" >更多</el-link>
               <template #dropdown>
 
                 <el-dropdown-menu slot="dropdown">
@@ -131,13 +131,10 @@
       <el-form  label-width="80px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="班级id" prop="classId">
-              <el-input v-model="form.classId" placeholder="请输入班级id" maxlength="30" />
+            <el-form-item label="班级ID" prop="classId">
+              <el-input v-model="form.classId" placeholder="请输入班级ID" maxlength="30" disabled />
             </el-form-item>
           </el-col>
-        </el-row>
-
-        <el-row>
           <el-col :span="12">
             <el-form-item label="专业" prop="majorId">
               <el-select
@@ -147,12 +144,20 @@
                   style="width: 240px"
               >
                 <el-option
-                    v-for="dict of classList"
+                    v-for="dict of majorListAll"
                     :key="dict.majorId"
-                    :label="dict.major.majorName"
-                    :value="dict.major.majorId"
+                    :label="dict.majorName"
+                    :value="dict.majorId"
                 />
               </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="班级名称" prop="className">
+              <el-input v-model="form.className" placeholder="请输入班级名称" maxlength="30" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -232,6 +237,15 @@ const getList = () => {
   );
 };
 
+// 搜索区域中的专业
+const getMajor = () => {
+  loading.value = true;
+  reset();
+  listMajorAll().then(response => {
+    majorListAll.value = response;
+    loading.value = false;
+  })
+}
 
 // 用户状态修改
 const handleStatusChange = (row) => {
@@ -327,14 +341,16 @@ const handleResetPwd = (row) => {
 
 /** 提交按钮 */
 const submitForm = () => {
+  const {majorId,className} = form.value
+  const submit = {className,majorId}
   if (form.classId !== undefined) {
-    updateClass(form.value).then(response => {
+    updateClass(submit).then(response => {
       ElMessage.success("修改成功");
       open.value = false;
       getList();
     });
   } else {
-    addClass(form.value).then(response => {
+    addClass(submit).then(response => {
       ElMessage.success("新增成功")
       open.value = false;
       getList();
@@ -360,5 +376,5 @@ const handleDelete = (row) => {
 
 // created
 getList();
-
+getMajor();
 </script>

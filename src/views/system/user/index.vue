@@ -160,7 +160,7 @@
             >删除</el-link>
             <el-dropdown  @command="(command) => handleCommand(command, scope.row)">
 
-              <el-link  type="primary" icon="d-arrow-right">更多</el-link>
+              <el-link  type="primary" icon="d-arrow-right" style="display: none" >更多</el-link>
               <template #dropdown>
 
                 <el-dropdown-menu slot="dropdown">
@@ -198,9 +198,15 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="生日" prop="birthday">
-              <el-input v-model="form.birthday" placeholder="请输入生日" maxlength="11" />
+              <el-date-picker
+                  v-model="form.birthday"
+                  type="date"
+                  placeholder="请选择生日"
+              />
             </el-form-item>
           </el-col>
+
+
         </el-row>
 
         <el-row>
@@ -296,6 +302,7 @@ const form = reactive({
   status: undefined,
   gender:undefined,
   birthday:undefined,
+
 });
 
 const queryParams = reactive( {
@@ -437,7 +444,6 @@ const handleResetPwd = (row) => {
 /** 提交按钮 */
 const submitForm = () => {
   console.log("提交修改",form)
-
   if (form.userId !== undefined) {
     console.log(form);
     updateUser(form).then(response => {
@@ -447,6 +453,7 @@ const submitForm = () => {
     });
   } else {
     console.log(form);
+    form.role = 20;
     addUser(form).then(response => {
       ElMessage.success("新增成功")
       open.value = false;

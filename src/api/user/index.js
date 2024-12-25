@@ -70,6 +70,14 @@ const listInstructor = (query) =>{
     })
 }
 
+const listCourse = (query) => {
+    return service({
+        url: '/system/course/list',
+        method: 'get',
+        params: query,
+    })
+}
+
 const getUser = (userId) => {
     return service({
         url: '/system/user/' +userId,
@@ -112,6 +120,13 @@ const getInstructor = (userId) => {
     })
 }
 
+const getCourse = (courseId) => {
+    return service({
+        url: '/system/course/' + courseId,
+        method: 'get'
+    })
+}
+
 const delUser = (userId) => {
     return service({
         url: '/system/user/' + userId,
@@ -150,6 +165,13 @@ const delTeacher = () =>{
 const delInstructor = () =>{
     return service({
         url: '/system/instructor/' + userId,
+        method: 'delete'
+    })
+}
+
+const delCourse = (courseId) => {
+    return service({
+        url: '/system/course/' + courseId,
         method: 'delete'
     })
 }
@@ -203,6 +225,14 @@ const addInstructor = (data) => {
     })
 }
 
+const addCourse = (data) => {
+    return service({
+        url: '/system/course',
+        method: 'post',
+        data: data,
+    })
+}
+
 const updateUser = (data) => {
     return service({
         url: '/system/user/',
@@ -246,6 +276,14 @@ const updateTeacher = (data) => {
 const updateInstructor = (data) => {
     return service({
         url: '/system/instructor',
+        method: 'put',
+        data: data
+    })
+}
+
+const updateCourse = (data) => {
+    return service({
+        url: '/system/course',
         method: 'put',
         data: data
     })
@@ -305,4 +343,9 @@ export {
     addInstructor,
     delInstructor,
 
+    listCourse,
+    getCourse,
+    updateCourse,
+    addCourse,
+    delCourse,
 }
