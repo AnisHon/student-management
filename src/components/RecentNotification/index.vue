@@ -28,7 +28,7 @@ const list = ref([])
 
 const getList = async () => {
   list.value = await service({
-    url: "/common/notifications/" + 10,
+    url: "/common/notifications/" + 50,
     method: "GET",
   })
 }

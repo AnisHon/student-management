@@ -3,13 +3,65 @@
     <router-view/>
     <div v-show="route.name === 'Home' " class="app-container home">
       <el-row :gutter="20">
-        <el-col :sm="24" :lg="24">
-          <RecentNotification/>
+        <el-col :sm="24" :lg="12" style="padding-left: 20px">
+          <h2>教务后台管理系统</h2>
+          <p>
+            仿照经典后台管理系统框架“若依”自主实现的教务管理系统，
+            这种样式的web适用于通用的Web应用程序，如网站管理后台，网站会员中心，CMS，CRM，OA等等，
+            由于若依的前端高度抽象精简，再者使用了vue2前端，所以我们没有选择在若依上进行二次开发。
+            但是部分若依前端组件经过若依码封装后十分精简易上手，出错概率低。所以我们采用了少部分组件，和完整UI样式
+          </p>
+          <p>
+            <b>当前版本:</b> <span>v0.0.1</span>
+          </p>
+          <p>
+            <el-tag type="danger">&yen;已经开源</el-tag>
+          </p>
+          <p>
+            <el-link
+                size="small"
+                type="primary"
+                target="_blank"
+                href="https://github.com/AnisHon/studentManageDome"
+            >Github</el-link
+            >
+          </p>
+        </el-col>
 
-
+        <el-col :sm="24" :lg="12" style="padding-left: 50px">
+          <el-row>
+            <el-col :span="12">
+              <h2>技术选型</h2>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="6">
+              <h4>后端技术</h4>
+              <ul>
+                <li>SpringBoot2</li>
+                <li>Spring Security</li>
+                <li>JWT</li>
+                <li>MyBatis Plus</li>
+                <li>Hikari</li>
+                <li>Jackson</li>
+                <li>...</li>
+              </ul>
+            </el-col>
+            <el-col :span="6">
+              <h4>前端技术</h4>
+              <ul>
+                <li>Vue3</li>
+                <li>Pinia</li>
+                <li>Element-Plus</li>
+                <li>Axios</li>
+                <li>Sass</li>
+                <li>md-editor-v3</li>
+                <li>...</li>
+              </ul>
+            </el-col>
+          </el-row>
         </el-col>
       </el-row>
-
       <el-row :gutter="20" v-if="false">
         <el-col :sm="24" :lg="12" style="padding-left: 20px">
           <h2>若依后台管理框架</h2>
@@ -74,89 +126,99 @@
       <el-divider />
       <el-row :gutter="20">
         <el-col :xs="24" :sm="24" :md="12" :lg="8">
-          <el-card class="update-log">
-            <div slot="header" class="clearfix">
-              <h1>新闻资讯</h1>
-            </div>
-            <div class="body">
-              <div class="news-list">
-                <!-- News Item 1 -->
-                <div class="news-item">
-                  <h2 class="news-title">新闻标题 1</h2>
-                  <p class="news-description">这是新闻 1 的简短描述。你可以在这里看到关于该新闻的更多细节。</p>
-                  <a href="#" class="news-link">点击阅读更多</a>
-                </div>
-                <!-- News Item 2 -->
-                <div class="news-item">
-                  <h2 class="news-title">新闻标题 2</h2>
-                  <p class="news-description">这是新闻 2 的简短描述。更多信息请点击链接。</p>
-                  <a href="#" class="news-link">点击阅读更多</a>
-                </div>
-                <!-- News Item 3 -->
-                <div class="news-item">
-                  <h2 class="news-title">新闻标题 3</h2>
-                  <p class="news-description">这是新闻 3 的简短描述，了解更多详细信息。</p>
-                  <a href="#" class="news-link">点击阅读更多</a>
-                </div>
-                <!-- News Item 4 -->
-                <div class="news-item">
-                  <h2 class="news-title">新闻标题 4</h2>
-                  <p class="news-description">这是新闻 4 的简短描述。点击链接查看更多内容。</p>
-                  <a href="#" class="news-link">点击阅读更多</a>
-                </div>
+          <el-row :gutter="20">
+            <el-col :sm="24" :lg="24">
+              <RecentNotification style="min-height: 500px"/>
+            </el-col>
+          </el-row>
+        </el-col>
+        <el-col :xs="24" :sm="24" :md="12" :lg="8" >
+          <el-card class="update-log" style="min-height: 500px;">
+            <template #header>
+              <div slot="header" class="clearfix">
+                <span>更新日志</span>
               </div>
+            </template>
 
-            </div>
+            <el-collapse accordion>
+              <el-collapse-item title="v2.0.1 - 2024-12-26">
+                <ol>
+
+                  <li>添加数据</li>
+                  <li>检查bug</li>
+                </ol>
+              </el-collapse-item>
+
+              <el-collapse-item title="v2.0.1 - 2024-12-25">
+                <ol>
+
+                  <li>基本完成</li>
+                  <li>前端即将完成</li>
+                </ol>
+              </el-collapse-item>
+
+              <el-collapse-item title="v2.0.1 - 2024-12-25">
+                <ol>
+
+                  <li>大致完成</li>
+                  <li>前端大致完成</li>
+                </ol>
+              </el-collapse-item>
+
+              <el-collapse-item title="v2.0.1 - 2024-12-25">
+                <ol>
+
+                  <li>登录接口</li>
+                  <li>前端登录接口</li>
+                </ol>
+              </el-collapse-item>
+
+              <el-collapse-item title="v2.0.0 - 2024-12-24">
+                <ol>
+
+                  <li>实现一堆额外功能</li>
+                  <li>前端实现n个页面</li>
+                </ol>
+              </el-collapse-item>
+
+              <el-collapse-item title="v2.0.0 - 2024-12-24">
+                <ol>
+
+                  <li>各种通用实体类</li>
+                  <li>数据库创建，采用面向对象设计思想，先对象在数据库</li>
+                </ol>
+              </el-collapse-item>
+              <el-collapse-item title="v1.1.0 - 2024-12-24">
+                <ol>
+
+                  <li>后端框架实现</li>
+                  <li>前端框架框架实现</li>
+                </ol>
+              </el-collapse-item>
+            </el-collapse>
           </el-card>
         </el-col>
+
         <el-col :xs="24" :sm="24" :md="12" :lg="8">
-          <el-card class="update-log">
-            <div slot="header" class="clearfix">
-              <h1>公告栏</h1>
-            </div>
-
-            <div class="announcement-list">
-              <!-- Announcement Item 1 -->
-              <div class="announcement-item">
-                <h2 class="announcement-title">公告标题 1</h2>
-                <p class="announcement-description">这是公告 1 的简短描述。了解更多关于此次公告的详细信息。</p>
-                <a href="#" class="announcement-link">点击查看详情</a>
+          <el-card class="update-log" style="min-height: 500px;">
+            <template #header>
+              <div slot="header" class="clearfix">
+                <span>捐赠支持</span>
               </div>
-              <!-- Announcement Item 2 -->
-              <div class="announcement-item">
-                <h2 class="announcement-title">公告标题 2</h2>
-                <p class="announcement-description">这是公告 2 的简短描述，更多信息请点击查看。</p>
-                <a href="#" class="announcement-link">点击查看详情</a>
-              </div>
-              <!-- Announcement Item 3 -->
-              <div class="announcement-item">
-                <h2 class="announcement-title">公告标题 3</h2>
-                <p class="announcement-description">这是公告 3 的简短描述，点击链接查看更多内容。</p>
-                <a href="#" class="announcement-link">点击查看详情</a>
-              </div>
-              <!-- Announcement Item 4 -->
-              <div class="announcement-item">
-                <h2 class="announcement-title">公告标题 4</h2>
-                <p class="announcement-description">这是公告 4 的简短描述，点击此处查看详细内容。</p>
-                <a href="#" class="announcement-link">点击查看详情</a>
-              </div>
-            </div>
-
-          </el-card>
-        </el-col>
-        <el-col :xs="24" :sm="24" :md="12" :lg="8">
-          <el-card class="update-log">
+            </template>
 
             <div class="body">
-              <h1>项目介绍</h1>
-              <p>
-                333
-              </p>
+              <el-image
+                  src="pay.png"
+                  alt="donate"
+                  width="100%"
+              />
+              <span style="display: inline-block; height: 30px; line-height: 30px"
+              >这是若依官方的付款码，我特意留下，你可以请作者喝杯咖啡表示鼓励</span
+              >
             </div>
           </el-card>
-
         </el-col>
-
 
       </el-row>
     </div>
