@@ -332,6 +332,62 @@ export const delMark = (userId) => {
     })
 }
 
+export const listScore = (query) => {
+    return service({
+        url: '/teacher/score/list' ,
+        method: 'get',
+        params: query,
+    })
+}
+
+export const exportScore = (query) => {
+    return service({
+        url: '/teacher/score/export',
+        method: 'get',
+        params: query,
+    })
+}
+
+export const statisticScore = (query) => {
+    return service({
+        url: '/teacher/score/statistic',
+        method: 'get',
+        params: query
+    })
+}
+
+export const exportStatistic = (query) => {
+    return service({
+        url: '/teacher/score/statistic/export',
+        method: 'get' ,
+        params: query
+    })
+}
+
+export const addScore = (data) => {
+    return service({
+        url: '/teacher/score',
+        method: 'post',
+        data: data
+    })
+}
+
+export const updateScore = (data) => {
+    return service({
+        url: '/teacher/score',
+        method: 'put',
+        data: data
+    })
+}
+
+export const delScore = (data) => {
+    return service({
+        url: '/teacher/score',
+        method: 'delete',
+        data: data
+    })
+}
+
 export {
     listUser,
     getUser,
