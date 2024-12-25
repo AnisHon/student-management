@@ -69,6 +69,7 @@
             icon="plus"
 
             @click="handleAdd"
+            v-if="role !== INSTRUCTOR"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -76,7 +77,7 @@
             type="success"
             plain
             icon="edit"
-
+            v-if="role !== INSTRUCTOR"
             :disabled="single"
             @click="handleUpdate"
         >修改</el-button>
@@ -86,7 +87,7 @@
             type="danger"
             plain
             icon="delete"
-
+            v-if="role !== INSTRUCTOR"
             :disabled="multiple"
             @click="handleDelete"
         >删除</el-button>
@@ -113,7 +114,7 @@
 
     <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="50" align="center" />
-      <el-table-column label="班级ID" align="center" key="classId" prop="classId" v-if="columns[0].visible" />
+      <el-table-column label="班级ID" align="center" key="classId" prop="classId" v-if="columns[0].visible"   :show-overflow-tooltip="true"/>
       <el-table-column label="课程ID" align="center" key="courseId" prop="courseId" v-if="columns[1].visible" :show-overflow-tooltip="true" />
       <el-table-column label="课程名" align="center" key="courseName" prop="courseName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
       <el-table-column label="学分" align="center" key="credit" prop="credit" v-if="columns[3].visible" :show-overflow-tooltip="true" />
@@ -236,6 +237,10 @@ import Pagination from "@/components/Pagination/index.vue";
 import {addScore, delScore, downloadScore, listScore, updateScore,} from "@/api/user/index.js";
 import RightToolbar from "@/components/RightToolbar/index.vue";
 import {mark} from "@/api/course/mark.js";
+import {useUserStore} from "@/stores/user.js";
+import {INSTRUCTOR} from "@/api/auth/auth.js";
+
+const role = useUserStore().role
 
 const loading =  ref(true);
 // 选中数组

@@ -29,10 +29,16 @@ export const useUserStore = defineStore('user', () => {
         return user.value;
     }
 
+    const clearUser = () => {
+        user.value = undefined
+    }
+
 
 
     return {
         role,
-        getUser
+        getUser,
+        user,
+        clearUser,
     }
 })

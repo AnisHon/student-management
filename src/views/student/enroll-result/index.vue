@@ -14,7 +14,7 @@
               type="primary"
               plain
               icon="plus"
-              :disabled="(single && multiple)"
+              :disabled="!multiple"
               @click="handleDrop"
           >
             退选
@@ -58,8 +58,7 @@ const multiple = ref(false);
 
 const handleSelectionChange = (selection) => {
   ids.value = selection.map(item => item.teachId);
-  single.value = selection.length !== 1;
-  multiple.value = !selection.length;
+  multiple.value = selection.length > 0;
 };
 const getList = async () => {
   loading.value = true;
@@ -78,6 +77,7 @@ const handleDrop = () => {
   dropCourse(ids.value)
       .then(result => {
         ElNotification.success("退课成功")
+        getList();
       })
       .catch()
 

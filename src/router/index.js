@@ -2,7 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Layout from '@/layout'
 import {ADMIN, INSTRUCTOR, PUBLIC, STUDENT, TEACHER} from "@/api/auth/auth.js";
 import NProgress from 'nprogress'
-import {useUserStore} from "@/stores/user.js";   // 导入 nprogress
+import {useUserStore} from "@/stores/user.js";
+import * as userStore from "@/api/user/index.js";   // 导入 nprogress
 
 
 export const constRouters = [
@@ -85,6 +86,8 @@ export const constRouters = [
             title: "教师管理",
             role: [TEACHER, INSTRUCTOR],
             icon: "UserFilled",
+            no: STUDENT,
+            yes: ADMIN,
           },
           children: [
             {
@@ -93,6 +96,7 @@ export const constRouters = [
               meta:{
                 title: "标记学生",
                 icon: "Aim",
+                no: ADMIN
               }
             },
             {
@@ -100,7 +104,8 @@ export const constRouters = [
               component:()=>import('@/views/system/assign'),
               meta: {
                 title: "我的授课",
-                icon: "Notebook"
+                icon: "Notebook",
+                no: [INSTRUCTOR, ADMIN]
               }
             },
             {
@@ -240,7 +245,8 @@ export const constRouters = [
         name: 'Login',
         component: () => import("@/views/login"),
         meta: {
-          title: "登录"
+          title: "登录",
+          login: false
         }
       },
     ]
@@ -272,15 +278,69 @@ const router = createRouter({
   routes: constRouters
 })
 
+router.afterEach((to, from, next) => {
+  NProgress.done();
+})
+
 
 router.beforeEach((to, from, next) => {
-
   NProgress.start();
-  useUserStore().getUser()
+  if (to.matched.length === 0) {
+    next({name: "404"})
+    return;
+  }
 
 
-  next();
-  NProgress.done();
+  if (!to.meta.login) {
+    next();
+    return
+  }
+
+
+  useUserStore().getUser().then( () => {
+    const userStore = useUserStore();
+
+
+    // while (!userStore.user) {
+    //   console.log(userStore.user)
+    // }
+
+    const role = userStore.role
+    const ok = to.matched.some((item) => {
+      const innerRole = item.meta.role;
+      if (innerRole instanceof Array) {
+        const a = innerRole.some((item) => {
+          return item <= role
+        })
+
+        return a
+      } else {
+        const b =  innerRole <= role ; console.log(item)
+        return b
+      }
+
+    })
+
+    if (!ok) {
+      next({name: "403"})
+      return
+    }
+
+    if (to.matched.length === 0) {
+      next({name: "404"})
+    } else {
+      next();
+    }
+
+      }
+
+  )
+
+
+
+
+
+
 })
 
 

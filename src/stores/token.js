@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import {useUserStore} from "@/stores/user.js";
 
 // export const useToken = defineStore('token', () => {
 //     const token = ref("")
@@ -40,6 +41,7 @@ export const useToken = defineStore('token', {
             this.token = content
         },
         clear() {
+            useUserStore().clearUser()
             console.log("123123")
             this.token = ''
         }

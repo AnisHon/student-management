@@ -26,16 +26,31 @@
 
 import {computed} from "vue";
 import {useUserStore} from "@/stores/user.js";
-import {PUBLIC} from "@/api/auth/auth.js";
+import {PUBLIC, STUDENT} from "@/api/auth/auth.js";
 
 const {constRoute, url} = defineProps(["constRoute", "url"])
 
 const userStore = useUserStore()
 
 const show = computed(() => {
+  // return true;
   const role = userStore.role;
 
   const routerRole = constRoute.meta.role;
+
+  if (role !== routerRole && routerRole === STUDENT) {
+    return false;
+  }
+
+  if (constRoute.meta.no instanceof Array && constRoute.meta.no.some(x => x === role)) {
+    return false;
+  } else if (constRoute.meta.no === role) {
+    return false;
+  }
+
+  if (constRoute.meta.yes === role) {
+    return true;
+  }
 
   if (routerRole === undefined) {
     return true;

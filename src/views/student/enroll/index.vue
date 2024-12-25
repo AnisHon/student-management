@@ -173,7 +173,7 @@ const handleEnroll = () => {
 
       }).catch(() => {})
           .finally(() => {
-            router.push("/student/score")
+            router.push("/student/result")
           })
 
     }
