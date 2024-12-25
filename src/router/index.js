@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Layout from '@/layout'
-import {ADMIN, PUBLIC, STUDENT, TEACHER} from "@/api/auth/auth.js";
-import NProgress from 'nprogress'   // 导入 nprogress
+import {ADMIN, INSTRUCTOR, PUBLIC, STUDENT, TEACHER} from "@/api/auth/auth.js";
+import NProgress from 'nprogress'
+import {useUserStore} from "@/stores/user.js";   // 导入 nprogress
 
 
 export const constRouters = [
@@ -70,6 +71,7 @@ export const constRouters = [
               component: () => import('@/views/student/enroll-result'),
               meta: {
                 title: "选课结果",
+                icon: "Money"
               }
             }
 
@@ -81,7 +83,7 @@ export const constRouters = [
           name: 'Teacher',
           meta: {
             title: "教师管理",
-            role: TEACHER,
+            role: [TEACHER, INSTRUCTOR],
             icon: "UserFilled",
           },
           children: [
@@ -91,6 +93,14 @@ export const constRouters = [
               meta:{
                 title: "标记学生",
                 icon: "Aim",
+              }
+            },
+            {
+              path: "courseAssign",
+              component:()=>import('@/views/system/assign'),
+              meta: {
+                title: "我的授课",
+                icon: "BookFilled"
               }
             },
             {
@@ -188,13 +198,7 @@ export const constRouters = [
                 }
               ]
             },
-            {
-              path: "courseAssign",
-              component:()=>import('@/views/system/assign'),
-              meta: {
-                title: "授课管理",
-              }
-            },
+
             {
               path: "article",
               name: "Article",
@@ -243,6 +247,7 @@ export const constRouters = [
   {
     path: '/404',
     name: '404',
+    component: () => import("@/views/404"),
     meta: {
       title: '404页面未找到',
       login: false
@@ -251,6 +256,7 @@ export const constRouters = [
   {
     path: '/403',
     name: '403',
+    component: () => import("@/views/403"),
     meta: {
       title: '禁止访问',
       login: false
@@ -269,6 +275,8 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
 
   NProgress.start();
+  useUserStore().getUser()
+
 
   next();
   NProgress.done();

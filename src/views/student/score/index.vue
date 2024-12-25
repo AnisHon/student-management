@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <el-empty description="您好像没有选课和分数" v-show="!Object.keys(scoreList).length"/>
     <div v-loading="loading" v-for="key in Object.keys(scoreList)">
       <h1 class="title">
         {{ `${key}-${Number(key) + 1}学年度` }}

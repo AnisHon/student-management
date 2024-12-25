@@ -1,20 +1,22 @@
 <template>
 
 
-  <el-sub-menu v-if="constRoute.children !== undefined && !constRoute.meta.leaf" :index="constRoute.path">
-    <template #title>
+    <el-sub-menu v-if="constRoute.children !== undefined && !constRoute.meta.leaf && show" :index="constRoute.path">
+      <template #title>
+        <el-icon><Component :is="constRoute.meta.icon"/></el-icon>
+        <span>{{ constRoute.meta.title }}</span>
+      </template>
+      <recursive-menu-item v-for="route of constRoute.children" :url="`${url}/${constRoute.path}`" :const-route="route" style="background-color: #1F2D3D"/>
+    </el-sub-menu>
+
+    <el-menu-item v-else-if="!constRoute.meta.hidden && show" :index="`${url}/${constRoute.path}`">
+
       <el-icon><Component :is="constRoute.meta.icon"/></el-icon>
       <span>{{ constRoute.meta.title }}</span>
-    </template>
-    <recursive-menu-item v-for="route of constRoute.children" :url="`${url}/${constRoute.path}`" :const-route="route" style="background-color: #1F2D3D"/>
-  </el-sub-menu>
 
-  <el-menu-item v-else-if="!constRoute.meta.hidden" :index="`${url}/${constRoute.path}`">
+    </el-menu-item>
 
-    <el-icon><Component :is="constRoute.meta.icon"/></el-icon>
-    <span>{{ constRoute.meta.title }}</span>
 
-  </el-menu-item>
 
 
 
@@ -22,8 +24,36 @@
 </template>
 <script setup>
 
+import {computed} from "vue";
+import {useUserStore} from "@/stores/user.js";
+import {PUBLIC} from "@/api/auth/auth.js";
+
 const {constRoute, url} = defineProps(["constRoute", "url"])
 
+const userStore = useUserStore()
+
+const show = computed(() => {
+  const role = userStore.role;
+
+  const routerRole = constRoute.meta.role;
+
+  if (routerRole === undefined) {
+    return true;
+  }
+
+  if (routerRole === PUBLIC) {
+    return true;
+  }
+
+  if (routerRole instanceof Array) {
+    return routerRole.some(item => item >= role)
+  } else {
+    return role >= routerRole;
+  }
+
+
+
+})
 
 </script>
 <style scoped>
