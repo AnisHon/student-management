@@ -13,7 +13,7 @@ const ADMIN = 20;
 
 const logout = () => {
    const token = useToken();
-   token.clearToken();
+   token.clear();
    router.push({name: "Login"});
 
 }

@@ -12,14 +12,16 @@ import App from './App.vue'
 import router from './router'
 
 const app = createApp(App)
-import piniaPluginPersist from 'pinia-plugin-persist'
+import piniaPersist from 'pinia-plugin-persistedstate';
 
 app.use(ElementPlus)
 const store = createPinia();
+store.use(piniaPersist)
+
+
 app.use(store)
 app.use(router)
 
-store.use(piniaPluginPersist)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
 }

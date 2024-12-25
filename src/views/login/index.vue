@@ -113,7 +113,7 @@ const doLogin = async () => {
   if (success) {
     ElNotification.success("登陆成功");
     router.replace("/");
-    tokenStore.setToken(token);
+    tokenStore.set(token);
   } else {
     ElNotification.error(message);
     flushCaptcha();

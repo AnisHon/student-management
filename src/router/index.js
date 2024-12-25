@@ -160,7 +160,15 @@ export const constRouters = [
             }
           ]
         },
-
+        {
+          path: "/article-preview",
+          name: "ArticlePreview",
+          component: () => import("@/components/RecentNotification/Notification.vue"),
+          meta: {
+            name: "文章预览",
+            hidden: true
+          }
+        }
       ]
     },
   {

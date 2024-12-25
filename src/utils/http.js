@@ -36,7 +36,7 @@ service.interceptors.request.use(config => {
     const token = useToken()
 
 
-    config.headers['token'] = token.getToken()
+    config.headers['token'] = token.token
     return config
 }, error => {
     // console.log(error)
@@ -59,7 +59,7 @@ service.interceptors.response.use(res => {
             ElNotification.warning("登录状态已过期，请重新登录")
             const token = useToken()
             const router = useRouter()
-            token.setToken("")
+            token.clear()
             router.replace({name: "auth"})
             return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
         } else if (code === 500) {
@@ -80,7 +80,29 @@ service.interceptors.response.use(res => {
     },
     error => {
 
-        if (error.response.data.code === 400) {
+        let code = 200;
+
+
+        if (error.response && error.response.data) {
+            code = error.response.data.code;
+        }
+
+        if (code === 401) {
+            ElNotification.warning("登录状态已过期，请重新登录")
+            const token = useToken()
+            const router = useRouter()
+            token.clear()
+            router.replace({name: "auth"})
+            return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
+        } else if (code === 500) {
+            ElMessage.error(msg)
+            return Promise.reject(new Error(msg))
+        } else if (code === 601) {
+            ElMessage.warning(msg)
+            return Promise.reject('error')
+        }
+
+        if (code === 400) {
             ElNotification.error({message: error.response.data.message, duration: 5000})
             return Promise.reject(error)
         }

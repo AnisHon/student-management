@@ -9,7 +9,7 @@
     <recursive-menu-item v-for="route of constRoute.children" :url="`${url}/${constRoute.path}`" :const-route="route" style="background-color: #1F2D3D"/>
   </el-sub-menu>
 
-  <el-menu-item v-else :index="`${url}/${constRoute.path}`">
+  <el-menu-item v-else-if="!constRoute.meta.hidden" :index="`${url}/${constRoute.path}`">
 
     <el-icon><Component :is="constRoute.meta.icon"/></el-icon>
     <span>{{ constRoute.meta.title }}</span>

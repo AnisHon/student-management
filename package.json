@@ -22,6 +22,7 @@
     "pinia": "^2.1.7",
     "pinia-persistence": "^1.0.0",
     "pinia-plugin-persist": "^1.0.0",
+    "pinia-plugin-persistedstate": "^4.2.0",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
   },
