@@ -140,7 +140,6 @@
         v-model:page="queryParams.pageNum"
         v-model:limit="queryParams.pageSize"
         @pagination="getList"
-
     />
 
     <!-- 添加或修改用户配置对话框 -->
@@ -149,12 +148,35 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="学号" prop="userId">
-              <el-input v-model="form.userId" placeholder="请输入学号" maxlength="30" />
+              <el-input v-model="form.workNumber" placeholder="请输入学号" maxlength="30" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="学生姓名" prop="username">
               <el-input v-model="form.username" placeholder="请输入学生姓名" maxlength="11" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="12">
+            <!--            v-if="form.userId === undefined"-->
+            <el-form-item  label="用户密码" prop="password">
+              <el-input v-model="form.password" placeholder="请设置用户密码" type="password" maxlength="20" show-password/>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="状态">
+              <el-radio-group v-model="form.status">
+                <el-radio
+                    v-for="dict in [{value: 0, label: 'Normal'},
+                    {value: 1, label: 'Banned'}]"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                >{{dict.label}}</el-radio>
+              </el-radio-group>
             </el-form-item>
           </el-col>
         </el-row>
@@ -191,11 +213,7 @@
 
 
         <el-row>
-          <el-col :span="12">
-            <el-form-item label="学院" prop="institution">
-              <el-input v-model="form.institution" placeholder="学院" maxlength="11" />
-            </el-form-item>
-          </el-col>
+
           <el-col :span="12">
             <el-form-item label="专业" prop="majorId">
               <el-select
@@ -317,11 +335,13 @@ const columns = reactive([
 const getList = () => {
   loading.value = true;
   listStudent(queryParams).then(response => {
+    console.log("getList测试", response)
         userList.value = response.rows;
-        total.value = response.total;
+        total.value = Number(response.total);
         loading.value = false;
       }
   );
+
 };
 
 // 搜索区域中的班级
@@ -329,7 +349,7 @@ const getClass = () => {
   loading.value = true;
   listClass(queryParams).then(response => {
         classList.value = response.rows;
-        total.value = Number(response.total);
+        // total.value = Number(response.total);
         loading.value = false;
       }
   );
@@ -443,10 +463,10 @@ const submitForm = () => {
     classId: form.value.classId,
     gender: form.value.gender,
     password: form.value.password,
-    status: form.value.password,
+    status: form.value.status,
     userId: form.value.userId,
     username: form.value.username,
-    workNumber: form.value.workNumber
+    workNumber: form.value.workNumber,
   })
 
   console.log("提交修改",submit)

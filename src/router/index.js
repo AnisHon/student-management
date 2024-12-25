@@ -76,7 +76,24 @@ export const constRouters = [
             role: TEACHER,
             icon: "UserFilled",
           },
-          children: [],
+          children: [
+            {
+              path: "mark",
+              component: () => import('@/views/teacher/mark'),
+              meta:{
+                title: "标记学生",
+                icon: "Aim",
+              }
+            },
+            {
+              path: "score",
+              component: () => import('@/views/teacher/score'),
+              meta:{
+                title: "分数管理",
+                icon: "TrendCharts",
+              }
+            }
+          ],
         },
         {
           path: 'system',
@@ -161,6 +178,7 @@ export const constRouters = [
               component:  () => import("@/views/system/article"),
               meta: {
                 title: "文章管理",
+                icon: "Tickets",
                 leaf: true
               },
               children: [
@@ -170,18 +188,19 @@ export const constRouters = [
                   component: () => import("@/views/system/article/EditArticle.vue"),
                   meta: {
                     title: "编辑文章",
+
                   }
                 }
               ]
             },
-            {
-              path: "mark",
-              component: () => import('@/views/teacher/mark'),
-              meta:{
-                title: "标记学生",
-                icon: "Aim",
-              }
-            }
+            // {
+            //   path: "mark",
+            //   component: () => import('@/views/teacher/mark'),
+            //   meta:{
+            //     title: "标记学生",
+            //     icon: "Aim",
+            //   }
+            // }
           ]
         },
 

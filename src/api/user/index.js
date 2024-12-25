@@ -309,6 +309,7 @@ export const listMark = () => {
 }
 
 export const updateMark = (data) => {
+    // console.log("data 测试", data)
     return service({
         url: '/instructor/mark',
         method: 'put',
