@@ -78,6 +78,13 @@ const listCourse = (query) => {
     })
 }
 
+export const getAssign = (schoolYear) => {
+    return service({
+        url: '/system/course/' + schoolYear,
+        method: 'get'
+    })
+}
+
 const getUser = (userId) => {
     return service({
         url: '/system/user/' +userId,

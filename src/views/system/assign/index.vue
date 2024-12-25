@@ -2,18 +2,6 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
 
-<!--      <el-form-item label="查找方式">-->
-<!--        <el-radio-group v-model="select.status">-->
-<!--          <el-radio-->
-<!--              v-for="dict in [{value: 0, label: '教师查找分配的课程'},-->
-<!--                    {value: 1, label: '查找课程分配的教师'}]"-->
-<!--              :key="dict.value"-->
-<!--              :label="dict.label"-->
-<!--              :value="dict.value"-->
-<!--          >{{dict.label}}</el-radio>-->
-<!--        </el-radio-group>-->
-<!--      </el-form-item>-->
-
       <el-form-item  label="学年" prop="schoolYear">
         <el-select style="width: 240px" v-model="queryParams.schoolYear" :default-first-option="true">
           <el-option v-for="i of [2024,2023,2022]" :key="i" :label="`${i} 学年 - ${i+1} 学年`" :value="i" />
@@ -26,40 +14,7 @@
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-            type="primary"
-            plain
-            icon="plus"
-
-            @click="handleAdd"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-            type="success"
-            plain
-            icon="edit"
-            :disabled="single"
-            @click="handleUpdate"
-            style="display: none"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-            type="danger"
-            plain
-            icon="delete"
-
-            :disabled="multiple"
-            @click="handleDelete"
-        >删除</el-button>
-      </el-col>
-      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" :columns="columns" style="margin-left: auto"></right-toolbar>
-    </el-row>
-
-    <el-table v-if="!select.status" v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="50" align="center" />
       <el-table-column label="课程id" align="center" key="courseId" prop="courseId" v-if="columns[0].visible" />
       <el-table-column label="课程名称" align="center" key="courseName" prop="courseName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
@@ -69,122 +24,7 @@
       <el-table-column label="学年" align="center" key="schoolYear" prop="schoolYear" v-if="columns[5].visible" width="120" :formatter="roleFormatter" />
       <el-table-column label="任课教师姓名" align="center" key="teacherName" prop="teacherName" v-if="columns[6].visible" width="120" :formatter="roleFormatter" />
       <el-table-column label="任教课程ID" align="center" key="teachId" prop="teachId" v-if="columns[7].visible" width="120" :formatter="roleFormatter" />
-
-      <el-table-column
-          label="操作"
-          align="center"
-          width="160"
-          class-name="small-padding fixed-width"
-      >
-        <template v-slot="scope">
-          <div  v-if="scope.row.userId !== 1" >
-            <el-link
-                type="primary"
-                icon="edit"
-                @click="handleUpdate(scope.row)"
-                style="display: none"
-            >修改</el-link>
-            <el-link
-                type="primary"
-                icon="delete"
-                @click="handleDelete(scope.row)"
-            >删除</el-link>
-            <el-dropdown  @command="(command) => handleCommand(command, scope.row)">
-              <el-link  type="primary" icon="d-arrow-right" style="display: none" >更多</el-link>
-              <template #dropdown>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="handleResetPwd" icon="key">重置密码</el-dropdown-item>
-                  <el-dropdown-item command="handleAuthRole" icon="circle-check">分配角色</el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
-          </div>
-        </template>
-      </el-table-column>
     </el-table>
-
-
-    <pagination
-        v-show="total>0"
-        :total="total"
-        v-model:page="queryParams.pageNum"
-        v-model:limit="queryParams.pageSize"
-        @pagination="getList"
-
-    />
-
-
-    <!-- 添加或修改用户配置对话框 -->
-    <el-dialog :title="title" v-model="open" width="600px" append-to-body>
-      <el-form  label-width="80px">
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="姓名" prop="username">
-              <el-input v-model="form.username" placeholder="请输入姓名" maxlength="30" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="生日" prop="birthday">
-              <el-date-picker
-                  v-model="form.birthday"
-                  type="date"
-                  placeholder="请选择生日"
-              />
-            </el-form-item>
-          </el-col>
-
-
-        </el-row>
-
-        <el-row>
-          <el-col :span="12">
-            <!--            v-if="form.userId === undefined"-->
-            <el-form-item  label="用户密码" prop="password">
-              <el-input v-model="form.password" placeholder="请输入用户密码" type="password" maxlength="20" show-password/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="工号" prop="workNumber">
-              <el-input v-model="form.workNumber" placeholder="请输入工号" maxlength="11" />
-            </el-form-item>
-          </el-col>
-
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="状态">
-              <el-radio-group v-model="form.status">
-                <el-radio
-                    v-for="dict in [{value: 0, label: 'Normal'},
-                    {value: 1, label: 'Banned'}]"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
-                >{{dict.label}}</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="性别">
-              <el-radio-group v-model="form.gender">
-                <el-radio
-                    v-for="dict in [{value: 0, label: 'Male'},
-                    {value: 1, label: 'Female'}]"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
-                >{{dict.label}}</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">提 交</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
 
   </div>
 </template>
@@ -194,7 +34,7 @@
 import {reactive, ref} from "vue";
 import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
 import Pagination from "@/components/Pagination/index.vue";
-import {addUser, changeUserStatus, getUser, listUser, updateUser, delUser} from "@/api/user/index.js";
+import {addUser, changeUserStatus, getUser, listUser, updateUser, delUser, getAssign} from "@/api/user/index.js";
 import RightToolbar from "@/components/RightToolbar/index.vue";
 import _ from "lodash"
 
@@ -232,16 +72,8 @@ const form = reactive({
 
 });
 
-const queryParams = reactive( {
-  pageNum: 1,
-  pageSize: 10,
-  username: undefined,
-  status: undefined,
-  deptId: undefined,
-  workNumber: undefined,
-  gender: undefined,
-  userId:undefined,
-  role:undefined,
+const queryParams = ref( {
+  schoolYear: 2024,
 });
 // 列信息
 const columns = reactive([
@@ -266,14 +98,11 @@ const roleFormatter = (row, column, cellValue, index) => {
   return roleMap[cellValue] || '未知角色';
 };
 
-
 const getList = () => {
   loading.value = true;
   reset() ; // 重置表单
-  listUser(queryParams).then(response => {
-        // console.log(response)
-        userList.value = response.rows;
-        total.value = Number(response.total);
+  getAssign(queryParams.value.schoolYear).then(response => {
+        userList.value = response;
         loading.value = false;
       }
   );
