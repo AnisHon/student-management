@@ -28,3 +28,9 @@ export const assignedCourses = (schoolYear) => {
         method: "get"
     })
 }
+
+export const getSchoolYear = () => {
+    return service({
+        url: "/student/course/school-year",
+    })
+}

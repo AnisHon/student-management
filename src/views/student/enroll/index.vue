@@ -1,5 +1,13 @@
 <template>
   <div class="app-container">
+
+
+    <h1>
+      {{  }}
+    </h1>
+
+    <el-divider/>
+
     <el-form inline>
       <el-form-item label="课程名称" prop="courseName">
         <el-input
@@ -44,11 +52,13 @@
     </el-row>
     <el-table v-loading="loading" :data="list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="50" align="center" />
+      <el-table-column label="开设学院" align="center" key="institution" prop="institution"  :show-overflow-tooltip="true" />
       <el-table-column label="课程名称" align="center" key="courseName" prop="courseName"  />
+      <el-table-column label="任课教师" align="center" key="teacherName" prop="teacherName" width="120" />
       <el-table-column label="学分" align="center" key="credit" prop="credit"  :show-overflow-tooltip="true" />
       <el-table-column label="课时" align="center" key="duration" prop="duration"  :show-overflow-tooltip="true" />
-      <el-table-column label="开设学院" align="center" key="institution" prop="institution"  :show-overflow-tooltip="true" />
-      <el-table-column label="任课教师" align="center" key="teacherName" prop="teacherName" width="120" />
+
+
     </el-table>
     <pagination
         v-show="total>0"
@@ -172,6 +182,9 @@ const handleEnroll = () => {
   }, 1000)
 
 }
+
+
+
 
 getList()
 </script>
