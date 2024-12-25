@@ -101,7 +101,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="学生ID" prop="courseId">
-              <el-input v-model="form.studentId" placeholder="请输入学生ID" maxlength="30" />
+              <el-input v-model="form.studentId" placeholder="请输入学生ID" disabled maxlength="30" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -132,6 +132,7 @@ import {
 } from "@/api/user/index.js";
 // import {resetForm} from "@/utils/form.js";
 import RightToolbar from "@/components/RightToolbar/index.vue";
+import {getMark} from "@/api/course/mark.js";
 
 const loading =  ref(true);
 // 选中数组
@@ -189,17 +190,6 @@ const getList = () => {
   );
 };
 
-// 用户状态修改
-const handleStatusChange = (row) => {
-  let text = row.status === "0" ? "启用" : "停用";
-  ElMessageBox.confirm('确认要"' + text + '""' + row.courseName + '"用户吗？').then(function() {
-    return changeUserStatus(row.courseId, row.status);
-  }).then(() => {
-    ElMessage.success(text + "成功");
-  }).catch(function() {
-    row.status = row.status === "0" ? "1" : "0";
-  });
-};
 
 // 取消按钮
 const cancel = () => {
@@ -217,18 +207,6 @@ const reset = () => {
   // resetForm("form");
 };
 
-/** 搜索按钮操作 */
-const handleQuery = () => {
-  queryParams.pageNum = 1;
-  getList();
-};
-
-/** 重置按钮操作 */
-const resetQuery = () => {
-  // resetForm("queryForm");
-  queryParams.deptId = undefined;
-  handleQuery();
-};
 
 // 多选框选中数据
 const handleSelectionChange = (selection) => {
@@ -261,9 +239,9 @@ const handleAdd = () => {
 /** 修改按钮操作 */
 const handleUpdate = (row) => {
   reset();
-  const studentId = row.studentId || ids.value;
+  const studentId = row.studentId || ids.value[0];
   console.log("修改按钮", form)
-  listMark(studentId).then(response => {
+  getMark(studentId).then(response => {
     form.value = response;
     open.value = true;
     title.value = "修改课程信息";

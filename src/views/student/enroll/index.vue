@@ -2,11 +2,9 @@
   <div class="app-container">
 
 
-    <h1 style="font-weight: 400;">
-      {{ schoolYear }} - {{ schoolYear + 1 }} 年度选课
-    </h1>
 
-    <el-divider/>
+
+    <SchoolYearDisplay/>
 
     <el-form inline>
       <el-form-item label="课程名称" prop="courseName">
@@ -100,6 +98,7 @@
 </template>
 
 <script setup>
+import SchoolYearDisplay from "@/components/SchoolYearDisplay";
 import {enroll, enrollList} from "@/api/student/enroll.js";
 import {reactive, ref} from "vue";
 import Pagination from "@/components/Pagination/index.vue";

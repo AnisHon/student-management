@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
 
-      <el-form-item label="班级ID" prop="UserId">
+      <el-form-item label="班级ID" prop="">
         <el-input
             v-model="queryParams.classId"
             placeholder="请输入班级ID"
@@ -48,6 +48,13 @@
         </el-select>
       </el-form-item>
 
+      <el-form-item label="排序" prop="schoolYear">
+        <el-select style="width: 240px" v-model="queryParams.asc" :default-first-option="true" placeholder="不排序">
+          <el-option label="学生成绩升序" :value="true" />
+          <el-option label="学生成绩降序" :value="false" />
+        </el-select>
+      </el-form-item>
+
       <el-form-item>
         <el-button type="primary" icon="search" @click="handleQuery">搜索</el-button>
         <el-button icon="refresh"  @click="resetQuery">重置</el-button>
@@ -83,6 +90,23 @@
             :disabled="multiple"
             @click="handleDelete"
         >删除</el-button>
+      </el-col>
+
+      <el-col :span="1.5">
+        <el-button
+            type="info"
+            icon="Upload"
+            @click="handleImport"
+        >导入</el-button>
+      </el-col>
+
+      <el-col :span="1.5">
+        <el-button
+            plain
+            type="warning"
+            icon="Download"
+            @click="handleExport"
+        >导出</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" :columns="columns" style="margin-left: auto"></right-toolbar>
     </el-row>
@@ -120,12 +144,10 @@
             >删除</el-link>
             <el-dropdown  @command="(command) => handleCommand(command, scope.row)">
 
-              <el-link  type="primary" icon="d-arrow-right" style="display: none" >更多</el-link>
+              <el-link  type="primary" icon="d-arrow-right" >更多</el-link>
               <template #dropdown>
-
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="handleResetPwd" icon="key">重置密码</el-dropdown-item>
-                  <el-dropdown-item command="handleAuthRole" icon="circle-check">分配角色</el-dropdown-item>
+                  <el-dropdown-item command="handleMark" icon="Aim">标记该学生</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
 
@@ -185,6 +207,7 @@
       </div>
     </el-dialog>
 
+
   </div>
 </template>
 
@@ -193,18 +216,9 @@
 import {reactive, ref} from "vue";
 import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
 import Pagination from "@/components/Pagination/index.vue";
-import {
-  changeUserStatus,
-  delTeacher,
-  updateTeacher,
-  addTeacher,
-  getTeacher,
-  listTeacher,
-  listMajorAll, listScore, addScore, updateScore, delScore,
-} from "@/api/user/index.js";
-// import {resetForm} from "@/utils/form.js";
+import {addScore, delScore, listScore, updateScore,} from "@/api/user/index.js";
 import RightToolbar from "@/components/RightToolbar/index.vue";
-import {getScore} from "@/utils/score.js";
+import {mark} from "@/api/course/mark.js";
 
 const loading =  ref(true);
 // 选中数组
@@ -217,12 +231,10 @@ const multiple = ref(true);
 const showSearch = ref(true);
 // 总条数
 const total = ref(0);
-// 专业ALL数据
-const majorListAll = ref([]);
+
 // 成绩数据
 const userList = ref([]);
-// 教师表格数据
-const teacherList = ref([])
+
 // 弹出层标题
 const title =  ref("");
 
@@ -256,6 +268,7 @@ const columns = reactive([
   { key: 6, label: `任教ID`, visible: true }
 ])
 
+const tag = ref("");
 
 const getList = () => {
   loading.value = true;
@@ -268,27 +281,6 @@ const getList = () => {
   );
 };
 
-// 搜索区域中的专业
-const getMajor = () => {
-  loading.value = true;
-  reset();
-  listMajorAll().then(response => {
-    majorListAll.value = response;
-    loading.value = false;
-  })
-}
-
-// 用户状态修改
-const handleStatusChange = (row) => {
-  let text = row.status === "0" ? "启用" : "停用";
-  ElMessageBox.confirm('确认要"' + text + '""' + row.userName + '"用户吗？').then(function() {
-    return changeUserStatus(row.userId, row.status);
-  }).then(() => {
-    ElMessage.success(text + "成功");
-  }).catch(function() {
-    row.status = row.status === "0" ? "1" : "0";
-  });
-};
 
 // 取消按钮
 const cancel = () => {
@@ -302,17 +294,6 @@ const reset = () => {
     teachId: undefined,
     userId: undefined,
     score: undefined,
-    // userId: undefined,
-    // username: undefined,
-    // gender: undefined,
-    // birthday: undefined,
-    // title: undefined,
-    // workNumber: undefined,
-    //
-    // classId: undefined,
-    // courseName: undefined,
-    // schoolYear: 2024,
-    // asc: undefined,
   };
   // resetForm("form");
 };
@@ -332,11 +313,14 @@ const resetQuery = () => {
 
 // 多选框选中数据
 const handleSelectionChange = (selection) => {
-  ids.value = selection.map(item => ({
-    userId: item.userId,
-    score: item.score,
-    teachId: item.teachId
-  }));
+  ids.value = selection.map(item => {
+    console.log(item)
+    return {
+      userId: item.studentId,
+      teachId: item.teachId,
+      score: item.score,
+    }
+  });
   single.value = selection.length !== 1;
   multiple.value = !selection.length;
 };
@@ -344,8 +328,8 @@ const handleSelectionChange = (selection) => {
 // 更多操作触发
 const handleCommand = (command, row) => {
   switch (command) {
-    case "handleResetPwd":
-      handleResetPwd(row);
+    case "handleMark":
+      handleMark(row);
       break;
     case "handleAuthRole":
       // handleAuthRole(row);
@@ -362,34 +346,34 @@ const handleAdd = () => {
   title.value = "登记学生成绩";
 };
 
-// todo 有问题
 /** 修改按钮操作 */
 const handleUpdate = (row) => {
   reset();
-  const temp = ref({
-    score: row.score,
-    userId: row.userId,
-    teachId: row.teachId
-  });
-  const data = temp.value || ids.value;
-  console.log("修改按钮", data)
-  getList().then(response => {
-    console.log("111-response",response)
-    form.value = response;
-    open.value = true;
-    title.value = "修改成绩信息";
-  });
+  let data = {
+    userId: row.studentId,
+    teachId: row.teachId,
+    score: row.score
+  };
+  if (row instanceof Event) {
+    data = ids.value[0];
+  }
+
+  console.log(data);
+  form.value.userId = data.userId;
+  form.value.teachId = data.teachId;
+  form.value.score = data.score;
+
+  open.value = true;
+  title.value = "修改成绩"
+
+
 };
 
-/** 重置密码按钮操作 */
-const handleResetPwd = (row) => {
-  ElNotification.info("你猜我实现了吗")
-}
 
 /** 提交按钮 */
 const submitForm = () => {
   console.log("我是丁震",form)
-  if (form.value.userId !== undefined) {
+  if (title.value !== "登记学生成绩") {
     updateScore(form.value).then(response => {
       ElMessage.success("修改成功");
       open.value = false;
@@ -405,19 +389,56 @@ const submitForm = () => {
 }
 
 
-// todo 有问题
 /** 删除按钮操作 */
 const handleDelete = (row) => {
-  const userIds = row.userId || ids.value;
-  ElMessageBox.confirm('是否确认删除ID为"' + row.userId + '"的数据项？').then(function() {
-    return delScore(userIds);
+  let data = [{
+    userId: row.userId,
+    teachId: row.teachId,
+    score: row.score
+  }];
+  if (row instanceof Event) {
+    data = ids.value;
+  }
+  ElMessageBox.confirm('您真的要删除学生成绩吗？').then(function() {
+    return delScore(data);
   }).then(() => {
     getList();
     ElMessage.success("删除成功");
   }).catch(() => {});
 }
 
+const handleMark = async (row) => {
+  const data = {
+    studentId: row.studentId,
+    tag: ""
+  };
 
+
+  ElMessageBox.prompt('请输入标记内容', '标记学生', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+  })
+      .then(({ value }) => {
+        data.tag = value
+        mark(data)
+            .then(response => {
+              ElNotification.success("标记成功")
+            })
+      })
+      .catch(() => {})
+
+
+
+
+}
+
+const handleImport = () => {
+
+}
+
+const handleExport = () => {
+
+}
 
 // created
 getList();

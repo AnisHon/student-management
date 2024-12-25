@@ -7,6 +7,7 @@
       <el-divider/>
       <el-table  :data="scoreList[key]" @selection-change="handleSelectionChange" empty-text="你还没有任何成绩">
         <el-table-column label="课程名称" align="center" key="courseName" prop="courseName" />
+        <el-table-column label="教师名称" align="center" key="teacherName" prop="teacherName" :show-overflow-tooltip="true" />
         <el-table-column label="学年" align="center" key="schoolYear" prop="schoolYear" :show-overflow-tooltip="true" />
         <el-table-column label="成绩" align="center" key="score" prop="score" :show-overflow-tooltip="true" >
           <template v-slot="scope">
@@ -73,9 +74,6 @@ const handleDrop = () => {
         ElNotification.success("退课成功")
       })
       .catch()
-
-
-
 
 }
 
