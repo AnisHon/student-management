@@ -24,9 +24,24 @@
 
           <li style="margin: 0 10px">
             <el-dropdown @command="handleCommand">
-              <el-avatar
-                  src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-              />
+              <div class="profile">
+
+                <el-badge class="name" :offset="[10, 0]">
+                  <template #content>
+                    {{ role }}
+                  </template>
+                  <span style="font-weight: 700">
+                    {{ username }}
+                  </span>
+                </el-badge>
+
+                <el-avatar
+                    :src="portrait"
+                    alt="头像"
+                    @error="portrait = 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'"
+                />
+              </div>
+
               <template #dropdown>
                 <el-dropdown-item command="logout">
                   退出登录
@@ -66,6 +81,8 @@ import {provide, ref} from "vue";
 import {useDark} from "@vueuse/core";
 import {useRoute} from "vue-router";
 import {logout} from "@/api/auth/auth.js";
+import {useUserStore} from "@/stores/user.js";
+import {roleToString} from "@/utils/role.js";
 
 const isCollapse = ref(true)
 
@@ -73,6 +90,11 @@ const scroll = ref(undefined)
 const route = useRoute()
 provide("elMain", scroll)
 
+const useScore = useUserStore();
+
+const username = ref("")
+const role = ref("")
+const portrait = ref()
 
 const isDark = useDark()
 
@@ -83,17 +105,22 @@ const handleCommand = (command) => {
 }
 
 
+
+useScore.getUser()
+    .then(user => {
+      username.value = user.username;
+      role.value = roleToString(user.role)
+      portrait.value = user.portrait || "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+    })
+
 </script>
 
 <style lang="scss" scoped>
 .collapse {
-
   width: 63px;
-
 }
 
 .collapse-item {
-
   transition: width 0.4s ease;
 }
 
@@ -152,10 +179,26 @@ li{
   transform: translateX(30px);
 }
 
+.profile {
+  display: flex;
+  align-items: center;
+
+  .name {
+    margin: 0 40px 0 0;
+    user-select: none;
+  }
+
+}
+
 </style>
 
-<style>
+<style lang="scss" scoped>
 .el-menu {
   border: none;
+
+}
+
+:deep(.el-tooltip__trigger:focus-visible) {
+  outline: unset;
 }
 </style>

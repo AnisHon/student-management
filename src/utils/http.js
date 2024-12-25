@@ -4,6 +4,7 @@ import {Message} from "@element-plus/icons-vue";
 import {useRouter} from "vue-router";
 import {ElMessage, ElNotification} from "element-plus";
 import {title} from "mockjs/src/mock/random/text.js";
+import router from "@/router/index.js";
 
 
 
@@ -90,9 +91,8 @@ service.interceptors.response.use(res => {
         if (code === 401) {
             ElNotification.warning("登录状态已过期，请重新登录")
             const token = useToken()
-            const router = useRouter()
             token.clear()
-            router.replace({name: "auth"})
+            router.replace({name: "Account"})
             return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
         } else if (code === 500) {
             ElMessage.error(msg)

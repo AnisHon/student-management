@@ -224,6 +224,7 @@ import {
 // import {resetForm} from "@/utils/form.js";
 import RightToolbar from "@/components/RightToolbar/index.vue";
 import {useRoute, useRouter} from "vue-router";
+import {getSchoolYear} from "@/api/course/index.js";
 
 const route = useRoute();
 
@@ -252,7 +253,7 @@ const open = ref(false);
 // 表单参数
 const form = ref({});
 
-
+const schoolYear = ref("");
 
 const queryParams = reactive( {
   pageNum: 1,
@@ -332,6 +333,7 @@ const handleCommand = (command, row) => {
       break;
   }
 }
+
 /** 新增按钮操作 */
 const handleAdd = () => {
   reset();
@@ -389,7 +391,6 @@ const handleDelete = (row) => {
     }).catch(() => {});
   })
 }
-
 
 
 

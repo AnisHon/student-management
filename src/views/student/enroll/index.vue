@@ -2,8 +2,8 @@
   <div class="app-container">
 
 
-    <h1>
-      {{  }}
+    <h1 style="font-weight: 400;">
+      {{ schoolYear }} - {{ schoolYear + 1 }} 年度选课
     </h1>
 
     <el-divider/>
@@ -107,6 +107,7 @@ import _ from "lodash";
 import IconLoading from "@/assets/icons/IconAtom.vue";
 import {ElNotification} from "element-plus";
 import {useRouter} from "vue-router";
+import {getSchoolYear} from "@/api/course/index.js";
 const router = useRouter();
 const open = ref(false);
 const ids = ref([])
@@ -184,6 +185,14 @@ const handleEnroll = () => {
 }
 
 
+
+const schoolYear = ref(0);
+
+getSchoolYear()
+    .then((data) => {
+      const {schoolYear: sy} = data;
+      schoolYear.value = sy;
+    })
 
 
 getList()

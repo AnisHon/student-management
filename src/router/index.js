@@ -198,7 +198,7 @@ export const constRouters = [
   {
     path: '/account',
     name: 'Account',
-    redirect: 'login',
+    redirect: '/account/login',
     meta: {
       login: false
     },

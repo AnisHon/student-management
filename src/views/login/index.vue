@@ -65,9 +65,11 @@ import IconCaptcha from "@/assets/icons/IconCaptcha.vue";
 import {ElNotification} from "element-plus";
 import {useRouter} from "vue-router";
 import {useToken} from "@/stores/token.js";
+import {useUserStore} from "@/stores/user.js";
 
 const router = useRouter();
 const tokenStore = useToken();
+const userStore = useUserStore()
 
 
 const ruleFormRef = ref()
@@ -114,6 +116,8 @@ const doLogin = async () => {
     ElNotification.success("登陆成功");
     router.replace("/");
     tokenStore.set(token);
+    userStore.getUser();
+
   } else {
     ElNotification.error(message);
     flushCaptcha();

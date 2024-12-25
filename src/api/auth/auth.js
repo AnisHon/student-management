@@ -33,6 +33,13 @@ const login = (loginForm) => {
     })
 }
 
+export const me = () => {
+    return service({
+        url: "/auth",
+        method: "GET",
+    })
+}
+
 export {
     PUBLIC,
     STUDENT,
