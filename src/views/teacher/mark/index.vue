@@ -8,15 +8,14 @@
 <!--        <el-button icon="refresh"  @click="resetQuery">重置</el-button>-->
 <!--      </el-form-item>-->
 <!--    </el-form>-->
-<!-- todo -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
             type="primary"
             plain
             icon="plus"
-
             @click="handleAdd"
+            v-if="false"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -129,8 +128,7 @@ import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
 import Pagination from "@/components/Pagination/index.vue";
 import {
   changeUserStatus,
-  getStudent, listCourse, updateCourse, addCourse, delCourse, getCourse, listMark, updateMark, addMark,
-
+  listMark, updateMark, addMark, delMark,
 } from "@/api/user/index.js";
 // import {resetForm} from "@/utils/form.js";
 import RightToolbar from "@/components/RightToolbar/index.vue";
@@ -284,7 +282,8 @@ const submitForm = () => {
   const submit = {studentId, tag}
 
   console.log("提交修改",submit)
-  if (form.value.courseId !== undefined) {
+  if (form.value.studentId !== undefined) {
+    console.log("修改 -", submit.studentId)
     updateMark(submit).then(response => {
       ElMessage.success("修改成功");
       open.value = false;
@@ -292,6 +291,7 @@ const submitForm = () => {
     });
   } else {
     addMark(submit).then(response => {
+      console.log("新增 -", form)
       ElMessage.success("新增成功")
       open.value = false;
       getList();
@@ -301,9 +301,9 @@ const submitForm = () => {
 
 /** 删除按钮操作 */
 const handleDelete = (row) => {
-  const courseIds = row.courseId || ids.value;
-  ElMessageBox.confirm('是否确认删除编号为"' + courseIds + '"的数据项？').then( () => {
-    delCourse(courseIds).then(() => {
+  const studentIds = row.studentId || ids.value;
+  ElMessageBox.confirm('是否确认删除编号为"' + studentIds + '"的数据项？').then( () => {
+    delMark(studentIds).then(() => {
       getList();
       ElMessage.success("删除成功");
     }).catch(() => {});

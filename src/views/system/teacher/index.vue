@@ -2,20 +2,14 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
 
-      <el-form-item label="专业" prop="majorId">
-        <el-select
-            v-model="queryParams.majorId"
-            placeholder="选择专业"
+      <el-form-item label="用户ID" prop="UserId">
+        <el-input
+            v-model="queryParams.userId"
+            placeholder="请输入用户ID"
             clearable
             style="width: 240px"
-        >
-          <el-option
-              v-for="dict of majorListAll"
-              :key="dict.majorId"
-              :label="dict.majorName"
-              :value="dict.majorId"
-          />
-        </el-select>
+            @keyup.enter.native="handleQuery"
+        />
       </el-form-item>
 
       <el-form-item label="职称" prop="title">

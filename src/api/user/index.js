@@ -309,6 +309,7 @@ export const listMark = () => {
 }
 
 export const updateMark = (data) => {
+    // console.log("data 测试", data)
     return service({
         url: '/instructor/mark',
         method: 'put',
@@ -328,6 +329,62 @@ export const delMark = (userId) => {
     return service({
         url: '/instructor/mark/' + userId,
         method: 'delete'
+    })
+}
+
+export const listScore = (query) => {
+    return service({
+        url: '/teacher/score/list' ,
+        method: 'get',
+        params: query,
+    })
+}
+
+export const exportScore = (query) => {
+    return service({
+        url: '/teacher/score/export',
+        method: 'get',
+        params: query,
+    })
+}
+
+export const statisticScore = (query) => {
+    return service({
+        url: '/teacher/score/statistic',
+        method: 'get',
+        params: query
+    })
+}
+
+export const exportStatistic = (query) => {
+    return service({
+        url: '/teacher/score/statistic/export',
+        method: 'get' ,
+        params: query
+    })
+}
+
+export const addScore = (data) => {
+    return service({
+        url: '/teacher/score',
+        method: 'post',
+        data: data
+    })
+}
+
+export const updateScore = (data) => {
+    return service({
+        url: '/teacher/score',
+        method: 'put',
+        data: data
+    })
+}
+
+export const delScore = (data) => {
+    return service({
+        url: '/teacher/score',
+        method: 'delete',
+        data: data
     })
 }
 
