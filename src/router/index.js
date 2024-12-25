@@ -54,8 +54,6 @@ export const constRouters = [
             },
 
 
-
-
           ],
         },
         {
@@ -116,6 +114,13 @@ export const constRouters = [
               component:() => import('@/views/system/instructor'),
               meta: {
                 title: "辅导员管理"
+              }
+            },
+            {
+              path: "course",
+              component: () => import('@/views/system/course'),
+              meta:{
+                title: "课程管理"
               }
             }
           ]
