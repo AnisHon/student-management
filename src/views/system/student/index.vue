@@ -44,7 +44,7 @@
           <el-option
               v-for="dict of classList"
               :key="dict.classId"
-              :label="dict.className"
+              :label="`${dict.major.majorName}${dict.className}`"
               :value="dict.classId"
           />
         </el-select>
@@ -118,7 +118,7 @@
             >删除</el-link>
             <el-dropdown  @command="(command) => handleCommand(command, scope.row)">
 
-              <el-link  type="primary" icon="d-arrow-right">更多</el-link>
+              <el-link  type="primary" icon="d-arrow-right" style="display: none" >更多</el-link>
               <template #dropdown>
 
                 <el-dropdown-menu slot="dropdown">
@@ -180,7 +180,11 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="生日" prop="birthday">
-                <el-input v-model="form.birthday" placeholder="请输入生日" maxlength="11" />
+                <el-date-picker
+                    v-model="form.birthday"
+                    type="date"
+                    placeholder="请选择生日"
+                />
               </el-form-item>
             </el-col>
           </el-row>
@@ -199,12 +203,14 @@
                   placeholder="选择专业"
                   clearable
                   style="width: 240px"
+                  disabled
               >
                 <el-option
-                    v-for="dict of classList"
-                    :key="dict.classId"
-                    :label="dict.major.majorName"
-                    :value="dict.classId"
+                    v-for="dict of majorListAll"
+                    :key="dict.majorId"
+                    :label="dict.majorName"
+                    :value="dict.majorId"
+                    disabled
                 />
               </el-select>
             </el-form-item>
@@ -220,7 +226,7 @@
                 <el-option
                     v-for="dict of classList"
                     :key="dict.classId"
-                    :label="dict.className"
+                    :label="`${dict.major.majorName}${dict.className}`"
                     :value="dict.classId"
                 />
               </el-select>
@@ -363,15 +369,15 @@ const reset = () => {
     userId: undefined,
     deptId: undefined,
     username: undefined,
-    nickName: undefined,
-    password: undefined,
-    phonenumber: undefined,
-    email: undefined,
-    sex: undefined,
-    status: "0",
-    remark: undefined,
-    postIds: [],
-    roleIds: []
+    // nickName: undefined,
+    // password: undefined,
+    // phonenumber: undefined,
+    // email: undefined,
+    // sex: undefined,
+    // status: "0",
+    // remark: undefined,
+    // postIds: [],
+    // roleIds: []
   };
   // resetForm("form");
 };
@@ -436,7 +442,6 @@ const submitForm = () => {
     birthday: form.value.birthday,
     classId: form.value.classId,
     gender: form.value.gender,
-    majorId: form.value.majorId,
     password: form.value.password,
     status: form.value.password,
     userId: form.value.userId,

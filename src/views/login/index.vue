@@ -5,8 +5,8 @@
       <div style="text-align: center">
         <el-image src="/login.png" style="max-width: 200px" />
       </div>
-      <h1 style="text-align: center; font-weight: 400;">不欢迎登陆</h1>
-      <p style="text-align: center">滚出去，让你飞起来</p>
+      <h1 style="text-align: center; font-weight: 400;">欢迎登陆</h1>
+      <p style="text-align: center">综合一站式教务管理系统</p>
       <el-form
           ref="ruleFormRef"
           style="max-width: 600px; min-width: 400px"
@@ -35,7 +35,7 @@
         <el-row :gutter="20" class="item">
           <el-col :span="12">
             <el-form-item class="item" prop="code">
-              <el-input size="large" type="password" :prefix-icon="IconCaptcha" v-model="loginForm.code"/>
+              <el-input size="large" type="text" :prefix-icon="IconCaptcha" v-model="loginForm.code"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">

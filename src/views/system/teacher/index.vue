@@ -141,6 +141,29 @@
         </el-row>
         <el-row>
           <el-col :span="12">
+            <!--            v-if="form.userId === undefined"-->
+            <el-form-item  label="用户密码" prop="password">
+              <el-input v-model="form.password" placeholder="请设置用户密码" type="password" maxlength="20" show-password/>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="状态">
+              <el-radio-group v-model="form.status">
+                <el-radio
+                    v-for="dict in [{value: 0, label: 'Normal'},
+                    {value: 1, label: 'Banned'}]"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                >{{dict.label}}</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+
+        </el-row>
+        <el-row>
+          <el-col :span="12">
             <el-form-item label="职称" prop="title">
               <el-input v-model="form.title" placeholder="请输入职称" maxlength="30" />
             </el-form-item>
@@ -154,26 +177,25 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="生日" prop="birthday">
-              <el-input v-model="form.birthday" placeholder="请输入生日" maxlength="30" />
+              <el-date-picker
+                  v-model="form.birthday"
+                  type="date"
+                  placeholder="请选择生日"
+              />
             </el-form-item>
           </el-col>
 
           <el-col :span="12">
-            <el-form-item label="性别" >
-              <el-select
-                  v-model="form.gender"
-                  placeholder="选择性别"
-                  clearable
-                  style="width: 240px"
-              >
-                <el-option
-                    v-for="dict in [{label: 'Male', value: '0'},
-                    {label: 'Female', value: '1'}]"
+            <el-form-item label="性别">
+              <el-radio-group v-model="form.gender">
+                <el-radio
+                    v-for="dict in [{value: 0, label: 'Male'},
+                    {value: 1, label: 'Female'}]"
                     :key="dict.value"
                     :label="dict.label"
                     :value="dict.value"
-                />
-              </el-select>
+                >{{dict.label}}</el-radio>
+              </el-radio-group>
             </el-form-item>
           </el-col>
         </el-row>
@@ -199,7 +221,8 @@ import {
     updateTeacher,
     addTeacher,
     getTeacher,
-    listTeacher
+    listTeacher,
+    listMajorAll,
 } from "@/api/user/index.js";
 // import {resetForm} from "@/utils/form.js";
 import RightToolbar from "@/components/RightToolbar/index.vue";
@@ -260,6 +283,16 @@ const getList = () => {
       }
   );
 };
+
+// 搜索区域中的专业
+const getMajor = () => {
+  loading.value = true;
+  reset();
+  listMajorAll().then(response => {
+    majorListAll.value = response;
+    loading.value = false;
+  })
+}
 
 
 // 1871390885258567682
@@ -346,7 +379,7 @@ const handleCommand = (command, row) => {
 const handleAdd = () => {
   reset();
   open.value = true;
-  title.value = "新建班级";
+  title.value = "新建教师信息";
 };
 
 /** 修改按钮操作 */
@@ -358,7 +391,7 @@ const handleUpdate = (row) => {
   getTeacher(userId).then(response => {
     form.value = response;
     open.value = true;
-    title.value = "修改用班级信息";
+    title.value = "修改教师信息";
   });
 };
 
@@ -370,7 +403,7 @@ const handleResetPwd = (row) => {
 /** 提交按钮 */
 const submitForm = () => {
   console.log("我是丁震",form)
-  if (form.userId !== undefined) {
+  if (form.value.userId !== undefined) {
     updateTeacher(form.value).then(response => {
       ElMessage.success("修改成功");
       open.value = false;
@@ -403,5 +436,5 @@ const handleDelete = (row) => {
 
 // created
 getList();
-
+getMajor();
 </script>
