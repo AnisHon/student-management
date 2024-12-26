@@ -80,7 +80,7 @@ const listCourse = (query) => {
 
 export const getAssign = (schoolYear) => {
     return service({
-        url: '/system/course/' + schoolYear,
+        url: '/system/course/course/' + schoolYear,
         method: 'get'
     })
 }

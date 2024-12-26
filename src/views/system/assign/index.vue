@@ -1,35 +1,60 @@
 <template>
-  <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+  <div>
+    <router-view/>
+    <div v-show="route.name ==='courseAssign'" class="app-container">
+      <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
 
-      <el-form-item  label="学年" prop="schoolYear">
-        <el-select style="width: 240px" v-model="queryParams.schoolYear" :default-first-option="true">
-          <el-option v-for="i of [2024,2023,2022]" :key="i" :label="`${i} 学年 - ${i+1} 学年`" :value="i" />
-        </el-select>
-      </el-form-item>
+        <el-form-item  label="学年" prop="schoolYear">
+          <el-select style="width: 240px" v-model="queryParams.schoolYear" :default-first-option="true">
+            <el-option v-for="i of [2024,2023,2022]" :key="i" :label="`${i} 学年 - ${i+1} 学年`" :value="i" />
+          </el-select>
+        </el-form-item>
 
-      <el-form-item>
-        <el-button type="primary" icon="search" @click="handleQuery">搜索</el-button>
-        <el-button icon="refresh"  @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
+        <el-form-item>
+          <el-button type="primary" icon="search" @click="handleQuery">搜索</el-button>
+          <el-button icon="refresh"  @click="resetQuery">重置</el-button>
+        </el-form-item>
+      </el-form>
 
-    <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="50" align="center" />
-      <el-table-column label="课程id" align="center" key="courseId" prop="courseId" v-if="columns[0].visible" />
-      <el-table-column label="课程名称" align="center" key="courseName" prop="courseName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
-      <el-table-column label="学分" align="center" key="credit" prop="credit" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-      <el-table-column label="课时" align="center" key="duration" prop="duration" v-if="columns[3].visible" :show-overflow-tooltip="true" />
-      <el-table-column label="学院名" align="center" key="institution" prop="institution" v-if="columns[4].visible" width="120" />
-      <el-table-column label="学年" align="center" key="schoolYear" prop="schoolYear" v-if="columns[5].visible" width="120" :formatter="roleFormatter" />
-      <el-table-column label="任课教师姓名" align="center" key="teacherName" prop="teacherName" v-if="columns[6].visible" width="120" :formatter="roleFormatter" />
-      <el-table-column label="任教课程ID" align="center" key="teachId" prop="teachId" v-if="columns[7].visible" width="120" :formatter="roleFormatter" />
-    </el-table>
+      <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
+        <el-table-column label="课程id" align="center" key="courseId" prop="courseId" v-if="columns[0].visible" />
+        <el-table-column label="课程名称" align="center" key="courseName" prop="courseName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
+        <el-table-column label="学分" align="center" key="credit" prop="credit" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+        <el-table-column label="课时" align="center" key="duration" prop="duration" v-if="columns[3].visible" :show-overflow-tooltip="true" />
+        <el-table-column label="学院名" align="center" key="institution" prop="institution" v-if="columns[4].visible" width="120" />
+        <el-table-column label="学年" align="center" key="schoolYear" prop="schoolYear" v-if="columns[5].visible" width="120" :formatter="roleFormatter" />
+        <el-table-column label="任课教师姓名" align="center" key="teacherName" prop="teacherName" v-if="columns[6].visible" width="120" :formatter="roleFormatter" />
+        <el-table-column label="任教课程ID" align="center" key="teachId" prop="teachId" v-if="columns[7].visible" width="120" :formatter="roleFormatter" />
+        <el-table-column
+            label="操作"
+            align="center"
+            width="160"
+            class-name="small-padding fixed-width"
 
+        >
+          <template v-slot="scope">
+            <div  v-if="scope.row.userId !== 1" style="display: flex">
+              <el-link
+                  type="primary"
+                  icon="edit"
+                  @click="handleStudent(scope.row)"
+              >查看学生</el-link>
+
+            </div>
+
+
+          </template>
+        </el-table-column>
+      </el-table>
+
+    </div>
   </div>
 </template>
 
 <script setup>
+
+import {useRoute, useRouter} from "vue-router";
+const route = useRoute();
 // 遮罩层
 import {reactive, ref} from "vue";
 import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
@@ -160,8 +185,8 @@ const handleSelectionChange = (selection) => {
 // 更多操作触发
 const handleCommand = (command, row) => {
   switch (command) {
-    case "handleResetPwd":
-      handleResetPwd(row);
+    case "student":
+      handleStudent(row);
       break;
     case "handleAuthRole":
       // handleAuthRole(row);
@@ -190,11 +215,12 @@ const handleUpdate = (row) => {
     title.value = "修改用户";
   });
 };
-
+const router = useRouter()
 
 /** 重置密码按钮操作 */
-const handleResetPwd = (row) => {
-  ElNotification.info("你猜我实现了吗")
+const handleStudent = (row) => {
+  console.log(row.teachId)
+  router.push({name: "StudentH", params: {teachId: row.teachId}});
 }
 
 /** 提交按钮 */

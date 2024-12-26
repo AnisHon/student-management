@@ -101,12 +101,24 @@ export const constRouters = [
             },
             {
               path: "courseAssign",
+              name: "courseAssign",
               component:()=>import('@/views/system/assign'),
               meta: {
                 title: "我的授课",
                 icon: "Notebook",
+                leaf: true,
                 no: [INSTRUCTOR, ADMIN]
-              }
+              },
+              children: [
+                {
+                  path: "student/:teachId",
+                  name: "StudentH",
+                  component: () => import('@/views/system/assign/CheckStudent.vue'),
+                  meta: {
+                    title: "学生选课情况"
+                  }
+                }
+              ]
             },
             {
               path: "score",
